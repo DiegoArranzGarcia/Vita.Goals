@@ -16,7 +16,7 @@ pool:
 
 variables:
   goalsProjects: '**/*.csproj'
-  goalsHostProject: '**/Vita.Goal.Host.csproj'
+  goalsHostProject: '**/Vita.Goals.Host.csproj'
   goalsTestsProjects: '**/*.Tests.csproj'
   buildConfiguration: 'Release'
   DownloadArtifacts:  $(System.ArtifactsDirectory)
