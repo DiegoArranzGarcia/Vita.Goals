@@ -83,7 +83,7 @@ stages:
         projects: '$(goalsTestsProjects)'
 
     - task: ArchiveFiles@2
-      displayName: 'Packing Build Results'
+      displayName: 'Packing Build'
       inputs:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/build'
         includeRootFolder: false
@@ -106,7 +106,7 @@ stages:
 
   jobs:
   - job: BuildAspNetCoreApplication
-    displayName: 'Build AspNet Core Application'
+    displayName: 'Build Vita.Goals Application'
     steps:
 
     - task: DownloadBuildArtifacts@0
