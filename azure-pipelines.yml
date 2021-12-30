@@ -15,8 +15,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  goalsProjects: '**/*.csproj'
-  goalsHostProject: '**/Vita.Goals.Host.csproj'
+  solution: '**/*.sln'
   goalsTestsProjects: '**/*.Tests.csproj'
   buildConfiguration: 'Release'
   DownloadArtifacts:  $(System.ArtifactsDirectory)
@@ -41,16 +40,14 @@ stages:
         version: '6.0.x'
         packageType: sdk
 
-    - task: NuGetToolInstaller@1
-      displayName: 'Install NuGet Tool'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
+    - task: NuGetCommand@2
+      displayName: 'Restore NuGets for solution'
       inputs:
         command: 'restore'
-        projects: $(goalsProjects)
+        restoreSolution: '$(solution)'
         feedsToUse: 'select'
         vstsFeed: 'd4d4328d-23fb-4700-a85b-694186019d4e/5bee72dc-d135-4e9c-84ec-df7c2fe16086'
+        versioningScheme: byBuildNumber
 
     - task: SonarCloudPrepare@1
       displayName: 'Prepare Sonar Cloud Analysis'
@@ -61,12 +58,13 @@ stages:
         projectKey: 'DiegoArranzGarcia_Vita.Goals'
         projectName: 'Vita.Goals'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Build'
+    - task: VSBuild@1
+      displayName: 'Compile Solution'
       inputs:
-        command: 'build'
-        projects: '$(goalsHostProject)'
-        arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/build'
+        solution: '$(solution)'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
 
     - task: SonarCloudAnalyze@1
       displayName: 'SonarCloud Analysis'
