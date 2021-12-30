@@ -30,45 +30,69 @@ stages:
 - stage: Build
   displayName: 'Build & Generate Artifacts'
   jobs:
+
   - job: BuildAspNetCoreApplication
     displayName: 'Build AspNet Core Application'
     steps:
 
     - task: UseDotNet@2
+      displayName: 'Use .net 6'
       inputs:
         version: '6.0.x'
         packageType: sdk
 
     - task: NuGetToolInstaller@1
+      displayName: 'Install NuGet Tool'
 
     - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
       inputs:
         command: 'restore'
         projects: $(goalsProjects)
         feedsToUse: 'select'
         vstsFeed: 'd4d4328d-23fb-4700-a85b-694186019d4e/5bee72dc-d135-4e9c-84ec-df7c2fe16086'
 
+    - task: SonarCloudPrepare@1
+      displayName: 'Prepare Sonar Cloud Analysis'
+      inputs:
+        SonarCloud: 'SonarCloud (Vita)'
+        organization: 'vita'
+        scannerMode: 'MSBuild'
+        projectKey: 'DiegoArranzGarcia_Vita.Goals'
+        projectName: 'Vita.Goals'
+
     - task: DotNetCoreCLI@2
+      displayName: 'Build'
       inputs:
         command: 'build'
         projects: '$(goalsHostProject)'
         arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/build'
 
+    - task: SonarCloudAnalyze@1
+      displayName: 'SonarCloud Analysis'
+
+    - task: SonarCloudPublish@1
+      displayName: 'Publish SonarCloud Analysis'
+      inputs:
+        pollingTimeoutSec: '300'
+
     - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests'
       inputs:
         command: 'test'
         projects: '$(goalsTestsProjects)'
 
     - task: ArchiveFiles@2
+      displayName: 'Packing Build Results'
       inputs:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/build'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/artifacts/$(Build.BuildId).zip'
         replaceExistingArchive: true
-      displayName: 'Packing Build Results'
 
     - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
         ArtifactName: 'drop'
@@ -79,12 +103,14 @@ stages:
   condition: and(succeeded(), eq(variables.shouldDeploy, true))
   variables:
     - group: DevEnvironment
+
   jobs:
   - job: BuildAspNetCoreApplication
     displayName: 'Build AspNet Core Application'
     steps:
 
     - task: DownloadBuildArtifacts@0
+      displayName: 'Download Artifacts'
       inputs:
         buildType: 'current'
         downloadType: 'single'
@@ -92,6 +118,7 @@ stages:
         downloadPath: $(DownloadArtifacts)
 
     - task: AzureRmWebAppDeployment@4
+      displayName: 'Deploy Artifacts into WebApp'
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Vita Dev'
