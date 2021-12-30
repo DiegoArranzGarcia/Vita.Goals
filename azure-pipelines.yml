@@ -15,9 +15,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  goalsProjects: '**/Vita.Goals/**/*.csproj'
-  goalsTestsProjects: '**/Vita.Goals/**/**.Tests.csproj'
-  goalsHostProject: '**/Vita.Goals/**/Vita.Goals.Host.csproj'
+  goalsProjects: '**/*.csproj'
+  goalsHostProject: '**/Vita.Goal.Host.csproj'
+  goalsTestsProjects: '**/*.Tests.csproj'
   buildConfiguration: 'Release'
   DownloadArtifacts:  $(System.ArtifactsDirectory)
   ConnectionStrings.GoalsDbContext: '$(SqlServerConnectionString)Initial Catalog=dev-goals-vita-db;'
