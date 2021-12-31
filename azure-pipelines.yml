@@ -58,6 +58,8 @@ stages:
         scannerMode: 'MSBuild'
         projectKey: 'DiegoArranzGarcia_Vita.Goals'
         projectName: 'Vita.Goals'
+        extraProperties: |
+          sonar.exclusions=**/Vita.Goals.Infrastructure.Sql/Migrations
 
     - task: VSBuild@1
       displayName: 'Compile Solution'
