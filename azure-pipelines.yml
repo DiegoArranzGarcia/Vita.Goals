@@ -66,11 +66,11 @@ stages:
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
 
-     - task: DotNetCoreCLI@2
-       displayName: 'Run Unit Tests'
-       inputs:
-         command: 'test'
-         projects: '$(goalsTestsProjects)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests'
+      inputs:
+        command: 'test'
+        projects: '$(goalsTestsProjects)'
 
     - task: SonarCloudAnalyze@1
       displayName: 'SonarCloud Analysis'
