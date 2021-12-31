@@ -62,7 +62,6 @@ stages:
     - task: VSBuild@1
       displayName: 'Compile Solution'
       inputs:
-        msbuildArgs: 'OutputPath=$(Build.ArtifactStagingDirectory)/build'
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
@@ -84,7 +83,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Packing Build'
       inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/build'
+        rootFolderOrFile: './Vita.Goals.Host/bin/$(buildConfiguration)/net6.0/'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/artifacts/$(Build.BuildId).zip'
