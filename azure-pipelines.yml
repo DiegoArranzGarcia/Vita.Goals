@@ -62,6 +62,7 @@ stages:
     - task: VSBuild@1
       displayName: 'Compile Solution'
       inputs:
+        msbuildArgs: 'OutputPath=$(Build.ArtifactStagingDirectory)/build'
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
