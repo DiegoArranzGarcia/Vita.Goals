@@ -10,8 +10,8 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores
 {
     public class CategoryQueryStore : ICategoryQueryStore
     {
-        private const string GetCategoriesCreatedByUserQuery = "Select Id, Name, Color from Categories where CreatedBy = @UserId";
-        private const string GetCategoryByIdQuery = "Select Id, Name, Color from Categories where Id = @Id";
+        private const string GetCategoriesCreatedByUserQuery = "select Id, Name, Color from Categories where CreatedBy = @UserId";
+        private const string GetCategoryByIdQuery = "select Id, Name, Color from Categories where Id = @Id";
 
         private readonly IConnectionStringProvider _connectionStringProvider;
 
@@ -30,6 +30,7 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores
 
         public async Task<CategoryDto> GetCategoryById(Guid id)
         {
+
             using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
             connection.Open();
 

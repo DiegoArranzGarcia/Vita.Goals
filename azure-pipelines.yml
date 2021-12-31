@@ -15,9 +15,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  goalsProjects: '**/*.csproj'
-  goalsHostProject: '**/Vita.Goals.Host.csproj'
+  solution: '**/*.sln'
   goalsTestsProjects: '**/*.Tests.csproj'
+  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   DownloadArtifacts:  $(System.ArtifactsDirectory)
   ConnectionStrings.GoalsDbContext: '$(SqlServerConnectionString)Initial Catalog=dev-goals-vita-db;'
@@ -30,45 +30,69 @@ stages:
 - stage: Build
   displayName: 'Build & Generate Artifacts'
   jobs:
+
   - job: BuildAspNetCoreApplication
     displayName: 'Build AspNet Core Application'
     steps:
 
     - task: UseDotNet@2
+      displayName: 'Use .net 6'
       inputs:
         version: '6.0.x'
         packageType: sdk
 
-    - task: NuGetToolInstaller@1
-
-    - task: DotNetCoreCLI@2
+    - task: NuGetCommand@2
+      displayName: 'Restore NuGets for solution'
       inputs:
         command: 'restore'
-        projects: $(goalsProjects)
+        restoreSolution: '$(solution)'
         feedsToUse: 'select'
         vstsFeed: 'd4d4328d-23fb-4700-a85b-694186019d4e/5bee72dc-d135-4e9c-84ec-df7c2fe16086'
+        versioningScheme: byBuildNumber
 
-    - task: DotNetCoreCLI@2
+    - task: SonarCloudPrepare@1
+      displayName: 'Prepare SonarCloud Analysis'
       inputs:
-        command: 'build'
-        projects: '$(goalsHostProject)'
-        arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/build'
+        SonarCloud: 'SonarCloud (Vita)'
+        organization: 'vita'
+        scannerMode: 'MSBuild'
+        projectKey: 'DiegoArranzGarcia_Vita.Goals'
+        projectName: 'Vita.Goals'
+        extraProperties: |
+          sonar.exclusions=**/Vita.Goals.Infrastructure.Sql/Migrations/**
+
+    - task: VSBuild@1
+      displayName: 'Compile Solution'
+      inputs:
+        solution: '$(solution)'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
 
     - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests'
       inputs:
         command: 'test'
         projects: '$(goalsTestsProjects)'
 
-    - task: ArchiveFiles@2
+    - task: SonarCloudAnalyze@1
+      displayName: 'SonarCloud Analysis'
+
+    - task: SonarCloudPublish@1
+      displayName: 'Publish SonarCloud Analysis'
       inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/build'
+        pollingTimeoutSec: '300'
+
+    - task: ArchiveFiles@2
+      displayName: 'Packing Build'
+      inputs:
+        rootFolderOrFile: './Vita.Goals.Host/bin/$(buildConfiguration)/net6.0/'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/artifacts/$(Build.BuildId).zip'
         replaceExistingArchive: true
-      displayName: 'Packing Build Results'
 
     - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
         ArtifactName: 'drop'
@@ -79,12 +103,14 @@ stages:
   condition: and(succeeded(), eq(variables.shouldDeploy, true))
   variables:
     - group: DevEnvironment
+
   jobs:
   - job: BuildAspNetCoreApplication
-    displayName: 'Build AspNet Core Application'
+    displayName: 'Build Vita.Goals Application'
     steps:
 
     - task: DownloadBuildArtifacts@0
+      displayName: 'Download Artifacts'
       inputs:
         buildType: 'current'
         downloadType: 'single'
@@ -92,6 +118,7 @@ stages:
         downloadPath: $(DownloadArtifacts)
 
     - task: AzureRmWebAppDeployment@4
+      displayName: 'Deploy Artifacts into WebApp'
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Vita Dev'

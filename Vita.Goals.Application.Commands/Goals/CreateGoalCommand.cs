@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Application.Commands.Goals
@@ -6,8 +7,8 @@ namespace Vita.Goals.Application.Commands.Goals
     public record CreateGoalCommand : IRequest<Guid>
     {
         public string Title { get; set; }
-        public string? Description { get; set; }
+        public string Description { get; set; }
         public Guid CreatedBy { get; set; }
-        public DateTimeInterval? AimDate { get; set; }
+        public DateTimeInterval AimDate { get; set; }
     }
 }
