@@ -51,13 +51,14 @@ stages:
         versioningScheme: byBuildNumber
 
     - task: SonarCloudPrepare@1
-      displayName: 'Prepare Sonar Cloud Analysis'
       inputs:
         SonarCloud: 'SonarCloud (Vita)'
         organization: 'vita'
-        scannerMode: 'MSBuild'
-        projectKey: 'DiegoArranzGarcia_Vita.Goals'
-        projectName: 'Vita.Goals'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'DiegoArranzGarcia_Vita.Goals'
+        cliProjectName: 'Vita.Goals'
+        cliSources: '.'
 
     - task: VSBuild@1
       displayName: 'Compile Solution'
