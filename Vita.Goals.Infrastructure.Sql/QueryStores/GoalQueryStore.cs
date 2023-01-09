@@ -50,7 +50,7 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores
                 sqlQuery += $@" and (@Start <= g.AimDate_End and g.AimDate_Start <= @End)";
 
             if (!showCompleted.HasValue || !showCompleted.Value)
-                sqlQuery += $@" and (g.GoalStatusId = {GoalStatus.ToDo.Id})";
+                sqlQuery += $@" and (g.GoalStatusId = {GoalStatus.ToBeDefined.Id})";
 
             return await connection.QueryAsync<GoalDto>(sqlQuery, new { UserId = userId, Start = startDate, End = endDate });
         }

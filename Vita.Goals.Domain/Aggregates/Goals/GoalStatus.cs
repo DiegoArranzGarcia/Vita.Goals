@@ -7,15 +7,17 @@ namespace Vita.Goals.Domain.Aggregates.Goals
 {
     public class GoalStatus : Enumeration
     {
-        public static GoalStatus ToDo => new(1, nameof(ToDo));
-        public static GoalStatus Completed => new(2, nameof(Completed));
+        public static GoalStatus ToBeDefined => new(1, nameof(ToBeDefined));
+        public static GoalStatus Ready => new(2, nameof(Ready));
+        public static GoalStatus InProgress => new(3, nameof(InProgress));
+        public static GoalStatus Completed => new(4, nameof(Completed));
 
         public GoalStatus(int id, string name) : base(id, name)
         {
 
         }
 
-        public static IEnumerable<GoalStatus> GetAllValues() => new[] { ToDo, Completed };
+        public static IEnumerable<GoalStatus> GetAllValues() => new[] { ToBeDefined, Ready, InProgress, Completed };
 
         public static GoalStatus FromName(string name)
         {

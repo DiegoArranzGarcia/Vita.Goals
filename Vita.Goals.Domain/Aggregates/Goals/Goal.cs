@@ -27,12 +27,12 @@ namespace Vita.Goals.Domain.Aggregates.Goals
             Description = description;
             AimDate = aimDate;
             CreatedOn = DateTimeOffset.UtcNow;
-            GoalStatus = GoalStatus.ToDo;
+            GoalStatus = GoalStatus.ToBeDefined;
         }
 
         public void Complete()
         {
-            Guard.Argument(GoalStatus).Equal(GoalStatus.ToDo);
+            Guard.Argument(GoalStatus).Equal(GoalStatus.ToBeDefined);
             GoalStatus = GoalStatus.Completed;
         }
 

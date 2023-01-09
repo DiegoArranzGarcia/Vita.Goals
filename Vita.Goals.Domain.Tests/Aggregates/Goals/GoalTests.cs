@@ -19,7 +19,7 @@ namespace Vita.Goals.Domain.Tests.Aggregates.Goals
             Assert.Equal(expected: GoalTestsFixture.GoodTitle, actual: goal.Title);
             Assert.Equal(expected: description, actual: goal.Description);
             Assert.Equal(expected: GoalTestsFixture.GoodCreatedBy, actual: goal.CreatedBy);
-            Assert.Equal(expected: GoalStatus.ToDo, actual: goal.GoalStatus);
+            Assert.Equal(expected: GoalStatus.ToBeDefined, actual: goal.GoalStatus);
             Assert.Equal(expected: aimDate, goal.AimDate);
         }
 
