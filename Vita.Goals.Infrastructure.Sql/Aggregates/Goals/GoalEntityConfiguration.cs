@@ -5,7 +5,7 @@ using Vita.Goals.Domain.Aggregates.Goals;
 
 namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
 {
-    public class GoalsConfiguration : EntityTypeConfiguration<Goal>
+    public class GoalEntityConfiguration : EntityTypeConfiguration<Goal>
     {
         public override void Configure(EntityTypeBuilder<Goal> builder)
         {
@@ -35,6 +35,10 @@ namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
             builder.Property(g => g.Description)
                    .IsRequired(false)
                    .HasMaxLength(255);
+
+            builder.HasMany(g => g.Tasks)
+                   .WithOne(t => t.AssociatedTo)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(g => g.GoalStatus)
                    .WithMany()

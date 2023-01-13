@@ -3,7 +3,7 @@ using System;
 
 namespace Vita.Goals.Application.Commands.Goals
 {
-    public record CompleteGoalCommand : IRequest
+    public record DeleteTaskCommand : IRequest
     {
         public Guid Id { get; set; }
     }

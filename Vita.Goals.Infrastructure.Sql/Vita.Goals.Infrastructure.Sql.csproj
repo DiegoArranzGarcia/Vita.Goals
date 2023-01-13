@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Vita.Goals.Domain\Vita.Goals.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Development\Vita\Vita.Goals\Vita.Goals.Infrastructure.Sql\QueryStores\.editorconfig" />
+  </ItemGroup>
+
 </Project>

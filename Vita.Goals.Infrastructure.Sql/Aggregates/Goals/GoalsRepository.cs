@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Vita.Core.Domain.Repositories;
 using Vita.Goals.Domain.Aggregates.Goals;
+using Task = System.Threading.Tasks.Task;
 
 namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
 {
@@ -15,7 +16,7 @@ namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<Goal> FindByIdAsync(Guid id)
+        public async Task<Goal> FindById(Guid id)
         {
             return await _context.Goals.FindAsync(id);
         }
@@ -34,7 +35,7 @@ namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
 
         public async Task Delete(Guid id)
         {
-            var goal = await FindByIdAsync(id);
+            var goal = await FindById(id);
             _context.Remove(goal);
         }
     }

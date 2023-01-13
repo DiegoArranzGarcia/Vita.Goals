@@ -9,6 +9,6 @@ namespace Vita.Goals.Domain.Aggregates.Goals
         Task<Goal> Add(Goal goal);
         Task<Goal> Update(Goal goal);
         Task Delete(Guid id);
-        Task<Goal> FindByIdAsync(Guid id);
+        Task<Goal> FindById(Guid id);
     }
 }
