@@ -19,7 +19,7 @@ namespace Vita.Goals.Application.Commands.Goals
 
         protected override async Task Handle(UpdateGoalCommand request, CancellationToken cancellationToken)
         {
-            var goal = await _goalsRepository.FindById(request.Id);
+            Goal goal = await _goalsRepository.FindById(request.Id);
 
             if (goal == null)
                 throw new Exception("The goal wasn't found");

@@ -13,15 +13,15 @@ namespace Vita.Goals.Application.Queries.Goals
         public DateTimeOffset? AimDateEnd { get; set; }
         public string Status { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
-        public List<TaskDto> Tasks { get; set; } = new List<TaskDto>();
+        public List<GoalTaskDto> Tasks { get; set; } = new List<GoalTaskDto>();
     }
 
-    public record TaskDto
+    public record GoalTaskDto
     {
         public Guid TaskId { get; set; }
         public string Title { get; set; }
         public DateTimeOffset? PlannedDateStart { get; set; }
-        public DateTimeOffset? PlannedDateEnd{ get; set; }
+        public DateTimeOffset? PlannedDateEnd { get; set; }
         public string Status { get; set; }
     }
 }

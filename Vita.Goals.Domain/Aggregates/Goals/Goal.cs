@@ -38,6 +38,21 @@ namespace Vita.Goals.Domain.Aggregates.Goals
         {
             get => _title;
             set => _title = Guard.Argument(value, nameof(Title)).NotNull().NotEmpty();
-        }        
+        }
+
+        public void Complete()
+        {
+            _goalStatusId = GoalStatus.Completed.Id;
+        }
+
+        public void Ready()
+        {
+            _goalStatusId = GoalStatus.Ready.Id;
+        }
+
+        public void InProgress()
+        {
+            _goalStatusId = GoalStatus.InProgress.Id;
+        }
     }
 }

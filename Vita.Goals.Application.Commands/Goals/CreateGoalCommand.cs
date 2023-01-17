@@ -9,6 +9,7 @@ namespace Vita.Goals.Application.Commands.Goals
         public string Title { get; set; }
         public string Description { get; set; }
         public Guid CreatedBy { get; set; }
-        public DateTimeInterval AimDate { get; set; }
+        public DateTimeOffset? AimDateStart { get; set; }
+        public DateTimeOffset? AimDateEnd { get; set; }
     }
 }

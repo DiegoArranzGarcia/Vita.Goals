@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.Aggregates.Tasks;
+using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Application.Commands.Tasks
 {
@@ -19,16 +20,18 @@ namespace Vita.Goals.Application.Commands.Tasks
 
         protected override async System.Threading.Tasks.Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            Domain.Aggregates.Tasks.Task task = await _taskRepository.FindById(request.Id);
+            Task task = await _taskRepository.FindById(request.TaskId);
 
             if (task == null)
                 throw new Exception("The task doesn't exist");
 
-            Goal goal = request.AssociatedGoalId.HasValue ? await _goalsRepository.FindById(request.AssociatedGoalId.Value) : null;
+            Goal goal = request.GoalId.HasValue ? await _goalsRepository.FindById(request.GoalId.Value) : null;
 
             task.AssociatedTo = goal;
-            task.PlannedDate = task.PlannedDate;
-            task.Title = task.Title;
+            task.Title = request.Title;
+            task.PlannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ? 
+                               new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) : 
+                               null;
 
             await _taskRepository.Update(task);
             await _taskRepository.UnitOfWork.SaveEntitiesAsync();

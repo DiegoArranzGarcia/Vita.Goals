@@ -8,6 +8,8 @@ using MediatR;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Goals;
+using Vita.Goals.Application.Queries.Tasks;
+using Vita.Goals.Infrastructure.Sql.QueryStores;
 
 namespace Vita.Goals.Host.Tasks
 {
@@ -17,19 +19,24 @@ namespace Vita.Goals.Host.Tasks
     public class TaskController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ITaskQueryStore _taskQueryStore;
 
-        public TaskController(IMediator mediator)
+        public TaskController(IMediator mediator, ITaskQueryStore taskQueryStore)
         {
             _mediator = mediator;
+            _taskQueryStore = taskQueryStore;
         }
 
         [HttpGet]
         [Route("{id}", Name = nameof(GetTask))]
-        public IActionResult GetTask(Guid id)
+        public async Task<IActionResult> GetTask(Guid id)
         {
-            var taskDto = new TaskDto() { TaskId = id };
+            TaskDto task = await _taskQueryStore.GetTaskById(id);
 
-            return Ok(taskDto);
+            if (task is null)
+                return NotFound();
+
+            return Ok(task);
         }
 
         [HttpPost]
@@ -53,7 +60,7 @@ namespace Vita.Goals.Host.Tasks
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            UpdateTaskCommand command = updateTaskCommand with { Id = id };
+            UpdateTaskCommand command = updateTaskCommand with { TaskId = id };
 
             await _mediator.Send(command);
 
@@ -67,7 +74,7 @@ namespace Vita.Goals.Host.Tasks
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            DeleteGoalCommand command = new() { Id = id };
+            DeleteTaskCommand command = new() { Id = id };
             await _mediator.Send(command);
 
             return NoContent();

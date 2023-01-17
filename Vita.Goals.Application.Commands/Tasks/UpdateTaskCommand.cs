@@ -6,9 +6,10 @@ namespace Vita.Goals.Application.Commands.Tasks
 {
     public record UpdateTaskCommand : IRequest
     {
-        public Guid Id { get; set; }
+        public Guid TaskId { get; set; }
         public string Title { get; set; }
-        public Guid? AssociatedGoalId { get; set; }
-        public DateTimeInterval AimDate { get; set; }
+        public Guid? GoalId { get; set; }
+        public DateTimeOffset? PlannedDateStart { get; set; }
+        public DateTimeOffset? PlannedDateEnd { get; set; }
     }
 }

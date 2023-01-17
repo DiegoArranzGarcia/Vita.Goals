@@ -8,6 +8,7 @@ namespace Vita.Goals.Application.Commands.Tasks
     {
         public Guid? GoalId { get; init; }
         public string Title { get; init; }
-        public DateTimeInterval PlannedDate { get; set; }
+        public DateTimeOffset? PlannedDateStart { get; set; }
+        public DateTimeOffset? PlannedDateEnd { get; set; }
     }
 }

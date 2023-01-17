@@ -47,6 +47,7 @@ namespace Vita.Goals.Host.Goals
 
             return Ok(goal);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateGoal(CreateGoalCommand createGoalCommand)
         {
@@ -90,6 +91,45 @@ namespace Vita.Goals.Host.Goals
 
             DeleteGoalCommand deleteGoalCommand = new() { Id = id };
             await _mediator.Send(deleteGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/complete")]
+        public async Task<IActionResult> CompleteGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            CompleteGoalCommand completeGoalCommand = new() { Id = id };
+            await _mediator.Send(completeGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/ready")]
+        public async Task<IActionResult> ReadyGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            InProgressGoalCommand readyGoalCommand = new() { Id = id };
+            await _mediator.Send(readyGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/in-progress")]
+        public async Task<IActionResult> InProgressGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            InProgressGoalCommand inProgressGoalCommand = new() { Id = id };
+            await _mediator.Send(inProgressGoalCommand);
 
             return NoContent();
         }

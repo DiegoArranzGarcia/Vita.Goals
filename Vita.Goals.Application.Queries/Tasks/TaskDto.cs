@@ -8,6 +8,10 @@ namespace Vita.Goals.Application.Queries.Tasks
 {
     public record TaskDto
     {
-        public Guid Id { get; set; }
+        public Guid TaskId { get; set; }
+        public string Title { get; set; }
+        public DateTimeOffset? PlannedDateStart { get; set; }
+        public DateTimeOffset? PlannedDateEnd { get; set; }
+        public string Status { get; set; }
     }
 }
