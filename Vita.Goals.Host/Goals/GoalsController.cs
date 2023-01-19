@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -46,6 +47,15 @@ namespace Vita.Goals.Host.Goals
                 return NotFound();
 
             return Ok(goal);
+        }
+
+        [HttpGet]
+        [Route("{id}/tasks")]
+        public async Task<IActionResult> GetGoalTasks(Guid id)
+        {
+            IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(id);
+
+            return Ok(tasks);
         }
 
         [HttpPost]

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vita.Goals.Application.Queries.Goals;
+using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
 
@@ -12,18 +13,22 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores
 {
     public class GoalQueryStore : IGoalQueryStore
     {
-        private const string GetGoalByIdQuery = @"select g.Id, g.Title, g.Description, g.CreatedOn, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status, t.Id as TaskId, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
+        private const string GetGoalByIdQuery = @"select g.Id, g.Title, g.Description, g.CreatedOn, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status
                                                   from Goals g 
                                                   inner join GoalStatus gs on g.GoalStatusId = gs.Id
-                                                   left join Tasks t on g.Id = t.AssociatedToId
-                                                   left join TaskStatus ts on t.TaskStatusId = ts.Id
                                                   where g.Id = @Id";
 
         private const string GetGoalsCreatedByUserQuery = @"select g.Id, g.Title, g.Description, g.CreatedOn, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status
                                                               from Goals g
                                                         inner join GoalStatus gs on g.GoalStatusId = gs.Id
                                                              where CreatedBy = @UserId";
-        
+
+        private const string GetGoalTasksQuery = @"select t.Id as TaskId, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
+                                                   from Tasks t 
+                                                   inner join TaskStatus ts on t.TaskStatusId = ts.Id
+                                                   where t.AssociatedToId = @Id";
+
+
         private readonly IConnectionStringProvider _connectionStringProvider;
 
         public GoalQueryStore(IConnectionStringProvider connectionStringProvider)
@@ -36,28 +41,15 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores
             using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
             connection.Open();
 
-            IEnumerable<GoalDto> goals = await connection.QueryAsync<GoalDto, GoalTaskDto, GoalDto>(GetGoalByIdQuery,
-                                                                                                    (goal, task) => 
-                                                                                                    { 
-                                                                                                        if (task != null) 
-                                                                                                            goal.Tasks.Add(task);                                                                                                        
+            return await connection.QueryFirstAsync<GoalDto>(GetGoalByIdQuery, param: new { id });
+        }
 
-                                                                                                        return goal; 
-                                                                                                    },
-                                                                                                    param: new { id },
-                                                                                                    splitOn: "TaskId");
+        public async Task<IEnumerable<GoalTaskDto>> GetGoalTasks(Guid id)
+        {
+            using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
+            connection.Open();
 
-            GoalDto goalDto = goals.GroupBy(g => g.Id)
-                                   .Select(group =>
-                                   {
-                                       GoalDto goal = group.First();
-                                       goal.Tasks = group.SelectMany(x => x.Tasks).ToList();
-
-                                       return goal;
-                                   })
-                                   .SingleOrDefault();
-
-            return goalDto;
+            return await connection.QueryAsync<GoalTaskDto>(GetGoalTasksQuery, param: new { id });
         }
 
         public async Task<IEnumerable<GoalDto>> GetGoalsCreatedByUser(Guid userId,

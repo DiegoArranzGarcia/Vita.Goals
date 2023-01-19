@@ -13,7 +13,6 @@ namespace Vita.Goals.Application.Queries.Goals
         public DateTimeOffset? AimDateEnd { get; set; }
         public string Status { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
-        public List<GoalTaskDto> Tasks { get; set; } = new List<GoalTaskDto>();
     }
 
     public record GoalTaskDto

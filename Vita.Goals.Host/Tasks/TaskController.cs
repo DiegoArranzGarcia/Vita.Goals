@@ -10,6 +10,8 @@ using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Infrastructure.Sql.QueryStores;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Vita.Goals.Host.Tasks
 {
@@ -37,6 +39,17 @@ namespace Vita.Goals.Host.Tasks
                 return NotFound();
 
             return Ok(task);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTasks(bool? showCompleted = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId, showCompleted, startDate, endDate);
+
+            return Ok(tasks);
         }
 
         [HttpPost]
