@@ -41,6 +41,11 @@ stages:
         version: '6.0.x'
         packageType: sdk
 
+    - task: NuGetToolInstaller@1
+      inputs:
+        versionSpec: 
+        checkLatest: true
+        
     - task: NuGetCommand@2
       displayName: 'Restore NuGets for solution'
       inputs:
