@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vita.Goals.Domain.Aggregates.Goals;
+using Vita.Goals.Domain.Aggregates.Tasks;
 
-namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
+namespace Vita.Goals.Infrastructure.Sql.Aggregates.Tasks
 {
-    public class GoalStatusConfiguration : IEntityTypeConfiguration<GoalStatus>
+    public class TaskStatusSafeEnumConfiguration : IEntityTypeConfiguration<TaskStatus>
     {
-        public void Configure(EntityTypeBuilder<GoalStatus> builder)
+        public void Configure(EntityTypeBuilder<TaskStatus> builder)
         {
-            builder.ToTable("GoalStatus");
+            builder.ToTable("TaskStatus");
 
             builder.HasKey(o => o.Id);
 
@@ -19,8 +19,6 @@ namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals
             builder.Property(o => o.Name)
                    .HasMaxLength(200)
                    .IsRequired();
-
-            builder.HasData(GoalStatus.GetAllValues());
         }
     }
 }

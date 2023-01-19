@@ -28,6 +28,7 @@ namespace Vita.Goals.Domain.Tests.Aggregates.Goals
         {
             return _fixture.Build<Goal>()
                            .Without(x => x.Events)
+                           .Without(x => x.Tasks)
                            .Create();
         }
 

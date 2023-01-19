@@ -1,6 +1,8 @@
 using Dawn;
 using System;
+using System.Collections.Generic;
 using Vita.Core.Domain.Repositories;
+using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Domain.Aggregates.Goals
@@ -9,8 +11,10 @@ namespace Vita.Goals.Domain.Aggregates.Goals
     {
         private string _title;
         private int _goalStatusId;
+        public GoalStatus GoalStatus { get; private set; }
         public string Description { get; set; }
         public DateTimeInterval AimDate { get; set; }
+        public ICollection<Task> Tasks { get; set; }
         public Guid CreatedBy { get; init; }
         public DateTimeOffset CreatedOn { get; init; }
 
@@ -27,25 +31,28 @@ namespace Vita.Goals.Domain.Aggregates.Goals
             Description = description;
             AimDate = aimDate;
             CreatedOn = DateTimeOffset.UtcNow;
-            GoalStatus = GoalStatus.ToDo;
-        }
-
-        public void Complete()
-        {
-            Guard.Argument(GoalStatus).Equal(GoalStatus.ToDo);
-            GoalStatus = GoalStatus.Completed;
-        }
-
-        public GoalStatus GoalStatus
-        {
-            get => GoalStatus.From(_goalStatusId);
-            private set => _goalStatusId = value.Id;
+            _goalStatusId = GoalStatus.ToBeDefined.Id;
         }
 
         public string Title
         {
             get => _title;
             set => _title = Guard.Argument(value, nameof(Title)).NotNull().NotEmpty();
+        }
+
+        public void Complete()
+        {
+            _goalStatusId = GoalStatus.Completed.Id;
+        }
+
+        public void Ready()
+        {
+            _goalStatusId = GoalStatus.Ready.Id;
+        }
+
+        public void InProgress()
+        {
+            _goalStatusId = GoalStatus.InProgress.Id;
         }
     }
 }

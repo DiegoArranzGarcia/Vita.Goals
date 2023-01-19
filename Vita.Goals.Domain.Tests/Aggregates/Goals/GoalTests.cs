@@ -19,7 +19,6 @@ namespace Vita.Goals.Domain.Tests.Aggregates.Goals
             Assert.Equal(expected: GoalTestsFixture.GoodTitle, actual: goal.Title);
             Assert.Equal(expected: description, actual: goal.Description);
             Assert.Equal(expected: GoalTestsFixture.GoodCreatedBy, actual: goal.CreatedBy);
-            Assert.Equal(expected: GoalStatus.ToDo, actual: goal.GoalStatus);
             Assert.Equal(expected: aimDate, goal.AimDate);
         }
 
@@ -58,16 +57,6 @@ namespace Vita.Goals.Domain.Tests.Aggregates.Goals
             Assert.Equal(expected: otherAimDate, actual: goal.AimDate);
         }
 
-        [Fact]
-        public void GivenToDoGoal_WhenCompleteGoal_ShouldChangeToCompleted()
-        {
-            var goal = GoalTestsFixture.CreateGoal();
-
-            goal.Complete();
-
-            Assert.Equal(expected: GoalStatus.Completed, actual: goal.GoalStatus);
-        }
-
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -90,16 +79,6 @@ namespace Vita.Goals.Domain.Tests.Aggregates.Goals
         public void GivenEmptyGuidCreatedBy_WhenCreateGoal_ShouldThrowArgumentException()
         {
             Assert.ThrowsAny<ArgumentException>(() => new Goal(GoalTestsFixture.GoodTitle, Guid.Empty));
-        }
-
-        [Fact]
-        public void GivenCompletedGoal_WhenCompleteGoal_ShouldThrowArgumentException()
-        {
-            var goal = GoalTestsFixture.CreateGoal();
-
-            goal.Complete();
-
-            Assert.Throws<ArgumentException>(() => goal.Complete());
         }
     }
 }

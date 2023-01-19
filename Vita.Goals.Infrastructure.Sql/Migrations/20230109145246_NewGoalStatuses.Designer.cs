@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vita.Goals.Infrastructure.Sql;
 
@@ -11,9 +12,10 @@ using Vita.Goals.Infrastructure.Sql;
 namespace Vita.Persistance.Sql.Migrations
 {
     [DbContext(typeof(GoalsDbContext))]
-    partial class VitaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230109145246_NewGoalStatuses")]
+    partial class NewGoalStatuses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,49 +120,6 @@ namespace Vita.Persistance.Sql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Tasks.Task", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AssociatedToId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset(0)");
-
-                    b.Property<int>("TaskStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Title");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssociatedToId");
-
-                    b.ToTable("Tasks", (string)null);
-                });
-
-            modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Tasks.TaskStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TaskStatus", (string)null);
-                });
-
             modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Goals.Goal", b =>
                 {
                     b.HasOne("Vita.Goals.Domain.Aggregates.Goals.GoalStatus", "GoalStatus")
@@ -191,42 +150,6 @@ namespace Vita.Persistance.Sql.Migrations
                     b.Navigation("AimDate");
 
                     b.Navigation("GoalStatus");
-                });
-
-            modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Tasks.Task", b =>
-                {
-                    b.HasOne("Vita.Goals.Domain.Aggregates.Goals.Goal", "AssociatedTo")
-                        .WithMany("Tasks")
-                        .HasForeignKey("AssociatedToId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("Vita.Goals.Domain.ValueObjects.DateTimeInterval", "PlannedDate", b1 =>
-                        {
-                            b1.Property<Guid>("TaskId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<DateTimeOffset>("End")
-                                .HasColumnType("datetimeoffset");
-
-                            b1.Property<DateTimeOffset>("Start")
-                                .HasColumnType("datetimeoffset");
-
-                            b1.HasKey("TaskId");
-
-                            b1.ToTable("Tasks");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TaskId");
-                        });
-
-                    b.Navigation("AssociatedTo");
-
-                    b.Navigation("PlannedDate");
-                });
-
-            modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Goals.Goal", b =>
-                {
-                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

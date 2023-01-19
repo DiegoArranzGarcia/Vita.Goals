@@ -7,23 +7,23 @@ using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Application.Commands.Goals
 {
-    public class CompleteGoalCommandHandler : AsyncRequestHandler<CompleteGoalCommand>
+    public class InProgressGoalCommandHandler : AsyncRequestHandler<InProgressGoalCommand>
     {
         private readonly IGoalsRepository _goalsRepository;
 
-        public CompleteGoalCommandHandler(IGoalsRepository goalsRepository)
+        public InProgressGoalCommandHandler(IGoalsRepository goalsRepository)
         {
             _goalsRepository = goalsRepository;
         }
 
-        protected override async Task Handle(CompleteGoalCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(InProgressGoalCommand request, CancellationToken cancellationToken)
         {
             Goal goal = await _goalsRepository.FindById(request.Id);
 
             if (goal == null)
                 throw new Exception("The goal wasn't found");
 
-            goal.Complete();
+            goal.InProgress();
 
             await _goalsRepository.Update(goal);
             await _goalsRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

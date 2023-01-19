@@ -6,13 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-    <PackageReference Include="Vita.Core.Infrastructure.Sql" Version="0.2.13" />
+    <PackageReference Include="Vita.Core.Infrastructure.Sql" Version="0.2.14" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +22,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Vita.Goals.Application.Queries\Vita.Goals.Application.Queries.csproj" />
     <ProjectReference Include="..\Vita.Goals.Domain\Vita.Goals.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Development\Vita\Vita.Goals\Vita.Goals.Infrastructure.Sql\QueryStores\.editorconfig" />
   </ItemGroup>
 
 </Project>

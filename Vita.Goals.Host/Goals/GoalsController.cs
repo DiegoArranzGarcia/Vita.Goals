@@ -2,16 +2,18 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Tasks;
 using Vita.Goals.Application.Queries.Goals;
 
 namespace Vita.Goals.Host.Goals
 {
-    [ApiController]
     [Authorize]
+    [ApiController] 
     [Route("api/goals")]
     public class GoalsController : ControllerBase
     {
@@ -25,7 +27,7 @@ namespace Vita.Goals.Host.Goals
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetGoalsAsync(bool? showCompleted = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+        public async Task<IActionResult> GetGoals(bool? showCompleted = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
@@ -36,8 +38,8 @@ namespace Vita.Goals.Host.Goals
         }
 
         [HttpGet]
-        [Route("{id}", Name = nameof(GetGoalAsync))]
-        public async Task<IActionResult> GetGoalAsync(Guid id)
+        [Route("{id}", Name = nameof(GetGoal))]
+        public async Task<IActionResult> GetGoal(Guid id)
         {
             var goal = await _goalQueryStore.GetGoalById(id);
 
@@ -47,8 +49,17 @@ namespace Vita.Goals.Host.Goals
             return Ok(goal);
         }
 
+        [HttpGet]
+        [Route("{id}/tasks")]
+        public async Task<IActionResult> GetGoalTasks(Guid id)
+        {
+            IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(id);
+
+            return Ok(tasks);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CreateGoalAsync(CreateGoalCommand createGoalCommand)
+        public async Task<IActionResult> CreateGoal(CreateGoalCommand createGoalCommand)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
@@ -64,45 +75,71 @@ namespace Vita.Goals.Host.Goals
             Response.Headers.Add("Access-Control-Allow-Headers", "Location");
             Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-            return CreatedAtRoute(routeName: nameof(GetGoalAsync), routeValues: new { id = createdGoal }, value: null);
+            return CreatedAtRoute(routeName: nameof(GetGoal), routeValues: new { id = createdGoal }, value: null);
         }
 
-
-        [HttpPost]
-        [Route("{id}/complete")]
-        public async Task<IActionResult> CompleteGoalAsync(Guid id)
-        {
-            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-                return Unauthorized();
-
-            var completeGoalCommand = new CompleteGoalCommand() { Id = id };
-            await _mediator.Send(completeGoalCommand);
-
-            return NoContent();
-        }
-
-        [HttpPut]
+        [HttpPatch]
         [Route("{id}")]
         public async Task<IActionResult> UpdateGoalAsync(Guid id, UpdateGoalCommand updateGoalCommand)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            updateGoalCommand.Id = id;
-            await _mediator.Send(updateGoalCommand);
+            UpdateGoalCommand command = updateGoalCommand with { Id = id };
+
+            await _mediator.Send(command);
 
             return NoContent();
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteGoalAsync(Guid id)
+        public async Task<IActionResult> DeleteGoal(Guid id)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            var deleteGoalCommand = new DeleteGoalCommand() { Id = id };
+            DeleteGoalCommand deleteGoalCommand = new() { Id = id };
             await _mediator.Send(deleteGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/complete")]
+        public async Task<IActionResult> CompleteGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            CompleteGoalCommand completeGoalCommand = new() { Id = id };
+            await _mediator.Send(completeGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/ready")]
+        public async Task<IActionResult> ReadyGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            InProgressGoalCommand readyGoalCommand = new() { Id = id };
+            await _mediator.Send(readyGoalCommand);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/in-progress")]
+        public async Task<IActionResult> InProgressGoal(Guid id)
+        {
+            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return Unauthorized();
+
+            InProgressGoalCommand inProgressGoalCommand = new() { Id = id };
+            await _mediator.Send(inProgressGoalCommand);
 
             return NoContent();
         }
