@@ -42,12 +42,14 @@ namespace Vita.Goals.Host.Tasks
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTasks(bool? showCompleted = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+        public async Task<IActionResult> GetTasks(Guid? userId = null, string status = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
         {
-            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            bool hasClaimUserIdClaim = Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid claimUserId);
+
+            if (userId.HasValue && hasClaimUserIdClaim && userId != claimUserId)
                 return Unauthorized();
 
-            IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId, showCompleted, startDate, endDate);
+            IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId ?? claimUserId, status, startDate, endDate);
 
             return Ok(tasks);
         }

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Vita.Goals.Application.Commands.Goals;
-using Vita.Goals.Application.Commands.Tasks;
 using Vita.Goals.Application.Queries.Goals;
 
 namespace Vita.Goals.Host.Goals
