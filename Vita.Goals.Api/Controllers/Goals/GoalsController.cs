@@ -1,19 +1,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Goals;
 
-namespace Vita.Goals.Host.Goals
+namespace Vita.Goals.Api.Controllers.Goals
 {
     [Authorize]
-    [ApiController] 
-    [Route("api/goals")]
+    [ApiController]
+    [Route("api/[controller]")]
     public class GoalsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -58,33 +54,49 @@ namespace Vita.Goals.Host.Goals
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGoal(CreateGoalCommand createGoalCommand)
+        public async Task<IActionResult> CreateGoal(CreateGoalDto createGoalDto)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            if (userId != createGoalCommand.CreatedBy)
+            if (userId != createGoalDto.CreatedBy)
                 return Forbid();
 
-            if (string.IsNullOrEmpty(createGoalCommand.Title))
+            if (string.IsNullOrEmpty(createGoalDto.Title))
                 return BadRequest("The title cannot be empty");
 
-            var createdGoal = await _mediator.Send(createGoalCommand);
+            CreateGoalCommand command = new()
+            {
+                Title = createGoalDto.Title,
+                AimDateStart = createGoalDto.AimDateStart,
+                AimDateEnd = createGoalDto.AimDateEnd,
+                CreatedBy = createGoalDto.CreatedBy,
+                Description = createGoalDto.Description
+            };
+
+            Guid createdGoalId = await _mediator.Send(command);
 
             Response.Headers.Add("Access-Control-Allow-Headers", "Location");
             Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-            return CreatedAtRoute(routeName: nameof(GetGoal), routeValues: new { id = createdGoal }, value: null);
+            return CreatedAtRoute(routeName: nameof(GetGoal), routeValues: new { id = createdGoalId }, value: null);
         }
 
         [HttpPatch]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateGoalAsync(Guid id, UpdateGoalCommand updateGoalCommand)
+        public async Task<IActionResult> UpdateGoalAsync(Guid id, UpdateGoalDto updateGoalDto)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            UpdateGoalCommand command = updateGoalCommand with { Id = id };
+            UpdateGoalCommand command = new()
+            {
+                Id = id,
+                Description = updateGoalDto.Description,
+                Title = updateGoalDto.Title,
+                AimDateStart = updateGoalDto.AimDateStart,
+                AimDateEnd = updateGoalDto.AimDateEnd,
+            };
 
             await _mediator.Send(command);
 

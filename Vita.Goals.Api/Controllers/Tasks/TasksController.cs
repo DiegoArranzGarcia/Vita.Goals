@@ -1,29 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 using Vita.Goals.Application.Commands.Tasks;
 using MediatR;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
-using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Application.Queries.Tasks;
-using Vita.Goals.Infrastructure.Sql.QueryStores;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace Vita.Goals.Host.Tasks
+namespace Vita.Goals.Api.Controllers.Tasks
 {
     [ApiController]
     [Authorize]
-    [Route("api/tasks")]
-    public class TaskController : ControllerBase
+    [Route("api/[controller]")]
+    public class TasksController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly ITaskQueryStore _taskQueryStore;
 
-        public TaskController(IMediator mediator, ITaskQueryStore taskQueryStore)
+        public TasksController(IMediator mediator, ITaskQueryStore taskQueryStore)
         {
             _mediator = mediator;
             _taskQueryStore = taskQueryStore;
@@ -55,10 +48,18 @@ namespace Vita.Goals.Host.Tasks
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask(CreateTaskCommand command)
+        public async Task<IActionResult> CreateTask(CreateTaskDto dto)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
+
+            CreateTaskCommand command = new()
+            {
+                GoalId = dto.GoalId,
+                Title = dto.Title,
+                PlannedDateStart = dto.PlannedDateStart,
+                PlannedDateEnd= dto.PlannedDateEnd
+            };
 
             Guid taskId = await _mediator.Send(command);
 
@@ -70,12 +71,19 @@ namespace Vita.Goals.Host.Tasks
 
         [HttpPatch]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateTask(Guid id, UpdateTaskCommand updateTaskCommand)
+        public async Task<IActionResult> UpdateTask(Guid id, UpdateTaskDto updateTaskDto)
         {
             if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
                 return Unauthorized();
 
-            UpdateTaskCommand command = updateTaskCommand with { TaskId = id };
+            UpdateTaskCommand command = new()
+            {
+                TaskId = id,
+                GoalId = updateTaskDto.GoalId,
+                Title = updateTaskDto.Title,
+                PlannedDateEnd = updateTaskDto.PlannedDateEnd,
+                PlannedDateStart = updateTaskDto.PlannedDateStart
+            };
 
             await _mediator.Send(command);
 

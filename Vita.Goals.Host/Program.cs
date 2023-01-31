@@ -6,15 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq;
-using Vita.Goals.Application.Commands.Categories;
-using Vita.Goals.Application.Queries.Categories;
+using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Application.Queries.Tasks;
-using Vita.Goals.Domain.Aggregates.Categories;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Infrastructure.Sql;
-using Vita.Goals.Infrastructure.Sql.Aggregates.Categories;
 using Vita.Goals.Infrastructure.Sql.Aggregates.Goals;
 using Vita.Goals.Infrastructure.Sql.Aggregates.Tasks;
 using Vita.Goals.Infrastructure.Sql.QueryStores;
@@ -90,16 +87,14 @@ app.Run();
 
 void AddApplicationBootstrapping()
 {
-    builder.Services.AddMediatR(typeof(CreateCategoryCommand), typeof(CreateCategoryCommandHandler));
+    builder.Services.AddMediatR(typeof(CreateGoalCommand), typeof(CreateGoalCommandHandler));
     builder.Services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(builder.Configuration.GetConnectionString("GoalsDbContext")));
 }
 
 void AddPersistanceBootstrapping()
 {
-    builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
     builder.Services.AddScoped<IGoalsRepository, GoalsRepository>();
     builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-    builder.Services.AddScoped<ICategoryQueryStore, CategoryQueryStore>();
     builder.Services.AddScoped<IGoalQueryStore, GoalQueryStore>();
     builder.Services.AddScoped<ITaskQueryStore, TaskQueryStore>();
     builder.Services.AddDbContext<GoalsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GoalsDbContext")));
