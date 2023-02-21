@@ -3,25 +3,24 @@ using System;
 using System.Collections.Generic;
 using Vita.Core.Domain;
 
-namespace Vita.Goals.Domain.ValueObjects
+namespace Vita.Goals.Domain.ValueObjects;
+
+public class DateTimeInterval : ValueObject
 {
-    public class DateTimeInterval : ValueObject
+    public DateTimeOffset Start { get; }
+    public DateTimeOffset End { get; }
+
+    public DateTimeInterval(DateTimeOffset start, DateTimeOffset end)
     {
-        public DateTimeOffset Start { get; init; }
-        public DateTimeOffset End { get; init; }
+        Guard.Argument(end, nameof(end)).InRange(start, DateTime.MaxValue);
 
-        public DateTimeInterval(DateTimeOffset start, DateTimeOffset end)
-        {
-            Guard.Argument(end, nameof(end)).InRange(start, DateTime.MaxValue);
+        Start = start;
+        End = end;
+    }
 
-            Start = start;
-            End = end;
-        }
-
-        protected override IEnumerable<object> GetAtomicValues()
-        {
-            yield return Start;
-            yield return End;
-        }
+    protected override IEnumerable<object> GetAtomicValues()
+    {
+        yield return Start;
+        yield return End;
     }
 }

@@ -6,101 +6,85 @@ using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Tasks;
 
-namespace Vita.Goals.Api.Controllers.Tasks
+namespace Vita.Goals.Api.Controllers.Tasks;
+
+[ApiController]
+[Authorize]
+[Route("api/[controller]")]
+public class TasksController : ControllerBase
 {
-    [ApiController]
-    [Authorize]
-    [Route("api/[controller]")]
-    public class TasksController : ControllerBase
+    private readonly ISender _sender;
+    private readonly ITaskQueryStore _taskQueryStore;
+
+    public TasksController(IMediator mediator, ITaskQueryStore taskQueryStore)
     {
-        private readonly IMediator _mediator;
-        private readonly ITaskQueryStore _taskQueryStore;
+        _sender = mediator;
+        _taskQueryStore = taskQueryStore;
+    }
 
-        public TasksController(IMediator mediator, ITaskQueryStore taskQueryStore)
-        {
-            _mediator = mediator;
-            _taskQueryStore = taskQueryStore;
-        }
+    [HttpGet]
+    [Route("{id}", Name = nameof(GetTask))]
+    public async Task<IActionResult> GetTask(Guid id)
+    {
+        TaskDto task = await _taskQueryStore.GetTaskById(id);
 
-        [HttpGet]
-        [Route("{id}", Name = nameof(GetTask))]
-        public async Task<IActionResult> GetTask(Guid id)
-        {
-            TaskDto task = await _taskQueryStore.GetTaskById(id);
+        if (task is null)
+            return NotFound();
 
-            if (task is null)
-                return NotFound();
+        return Ok(task);
+    }
 
-            return Ok(task);
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetTasks(Guid? userId = null, string? status = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+    {
+        bool hasClaimUserIdClaim = Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid claimUserId);
 
-        [HttpGet]
-        public async Task<IActionResult> GetTasks(Guid? userId = null, string status = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
-        {
-            bool hasClaimUserIdClaim = Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid claimUserId);
+        if (userId.HasValue && hasClaimUserIdClaim && userId != claimUserId)
+            return Unauthorized();
 
-            if (userId.HasValue && hasClaimUserIdClaim && userId != claimUserId)
-                return Unauthorized();
+        IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId ?? claimUserId, status, startDate, endDate);
 
-            IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId ?? claimUserId, status, startDate, endDate);
+        return Ok(tasks);
+    }
 
-            return Ok(tasks);
-        }
+    [HttpPost]
+    public async Task<IActionResult> CreateTask(CreateTaskDto dto)
+    {
+        if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            return Unauthorized();
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTask(CreateTaskDto dto)
-        {
-            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-                return Unauthorized();
+        CreateTaskCommand command = new(dto.GoalId, dto.Title, dto.PlannedDateStart, dto.PlannedDateEnd);        
+        Guid taskId = await _sender.Send(command);
 
-            CreateTaskCommand command = new()
-            {
-                GoalId = dto.GoalId,
-                Title = dto.Title,
-                PlannedDateStart = dto.PlannedDateStart,
-                PlannedDateEnd= dto.PlannedDateEnd
-            };
+        Response.Headers.Add("Access-Control-Allow-Headers", "Location");
+        Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-            Guid taskId = await _mediator.Send(command);
+        return CreatedAtRoute(routeName: nameof(GetTask), routeValues: new { id = taskId }, value: null);
+    }
 
-            Response.Headers.Add("Access-Control-Allow-Headers", "Location");
-            Response.Headers.Add("Access-Control-Expose-Headers", "Location");
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateTask(Guid id, UpdateTaskDto updateTaskDto)
+    {
+        if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            return Unauthorized();
 
-            return CreatedAtRoute(routeName: nameof(GetTask), routeValues: new { id = taskId }, value: null);
-        }
+        UpdateTaskCommand command = new(id, updateTaskDto.Title, updateTaskDto.GoalId, updateTaskDto.PlannedDateEnd, updateTaskDto.PlannedDateStart);
+        await _sender.Send(command);
 
-        [HttpPatch]
-        [Route("{id}")]
-        public async Task<IActionResult> UpdateTask(Guid id, UpdateTaskDto updateTaskDto)
-        {
-            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-                return Unauthorized();
+        return NoContent();
+    }
 
-            UpdateTaskCommand command = new()
-            {
-                TaskId = id,
-                GoalId = updateTaskDto.GoalId,
-                Title = updateTaskDto.Title,
-                PlannedDateEnd = updateTaskDto.PlannedDateEnd,
-                PlannedDateStart = updateTaskDto.PlannedDateStart
-            };
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> DeleteTask(Guid id)
+    {
+        if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            return Unauthorized();
 
-            await _mediator.Send(command);
+        DeleteTaskCommand command = new(id);
+        await _sender.Send(command);
 
-            return NoContent();
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult> DeleteTask(Guid id)
-        {
-            if (!Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-                return Unauthorized();
-
-            DeleteTaskCommand command = new() { Id = id };
-            await _mediator.Send(command);
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

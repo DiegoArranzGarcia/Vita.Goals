@@ -1,68 +1,26 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq;
-using Vita.Goals.Application.Commands.Goals;
-using Vita.Goals.Application.Queries.Goals;
-using Vita.Goals.Application.Queries.Tasks;
-using Vita.Goals.Domain.Aggregates.Goals;
-using Vita.Goals.Domain.Aggregates.Tasks;
+using Vita.Goals.Api;
+using Vita.Goals.Application.Commands;
+using Vita.Goals.Host.Infrastructure;
 using Vita.Goals.Infrastructure.Sql;
-using Vita.Goals.Infrastructure.Sql.Aggregates.Goals;
-using Vita.Goals.Infrastructure.Sql.Aggregates.Tasks;
-using Vita.Goals.Infrastructure.Sql.QueryStores;
-using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string[] allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "spa-cors", builder =>
-    {
-        builder.WithOrigins(allowedOrigins.ToArray())
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-});
+IServiceCollection services = builder.Services;
+IConfiguration configuration = builder.Configuration;
 
-builder.Services.AddAuthentication("Bearer")
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = builder.Configuration["JWTAuthority"];
-                    options.RequireHttpsMetadata = false;
+services.AddCustomAuthentication(configuration);
+services.AddCustomAuthorization();
+services.AddCustomCors(configuration);
 
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false
-                    };
-                });
+services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("ApiScope", policy =>
-    {
-        policy.RequireClaim("scope", "goals");
-    });
-});
-
-AddApplicationBootstrapping();
-AddPersistanceBootstrapping();
-
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-    options.SerializerSettings.DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
-});
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.ConfigureApiServices();
+services.ConfigureApplicationCommandServices();
+services.ConfigurePersistenceServices(configuration);
 
 var app = builder.Build();
 
@@ -84,18 +42,3 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();
-
-void AddApplicationBootstrapping()
-{
-    builder.Services.AddMediatR(typeof(CreateGoalCommand), typeof(CreateGoalCommandHandler));
-    builder.Services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(builder.Configuration.GetConnectionString("GoalsDbContext")));
-}
-
-void AddPersistanceBootstrapping()
-{
-    builder.Services.AddScoped<IGoalsRepository, GoalsRepository>();
-    builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-    builder.Services.AddScoped<IGoalQueryStore, GoalQueryStore>();
-    builder.Services.AddScoped<ITaskQueryStore, TaskQueryStore>();
-    builder.Services.AddDbContext<GoalsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GoalsDbContext")));
-}

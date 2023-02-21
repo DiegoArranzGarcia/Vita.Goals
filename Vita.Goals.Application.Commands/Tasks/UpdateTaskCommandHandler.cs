@@ -5,36 +5,35 @@ using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Domain.ValueObjects;
 
-namespace Vita.Goals.Application.Commands.Tasks
+namespace Vita.Goals.Application.Commands.Tasks;
+
+public class UpdateTaskCommandHandler : AsyncRequestHandler<UpdateTaskCommand>
 {
-    public class UpdateTaskCommandHandler : AsyncRequestHandler<UpdateTaskCommand>
+    private readonly IGoalsRepository _goalsRepository;
+    private readonly ITaskRepository _taskRepository;
+
+    public UpdateTaskCommandHandler(IGoalsRepository goalsRepository, ITaskRepository taskRepository)
     {
-        private readonly IGoalsRepository _goalsRepository;
-        private readonly ITaskRepository _taskRepository;
+        _goalsRepository = goalsRepository;
+        _taskRepository = taskRepository;
+    }
 
-        public UpdateTaskCommandHandler(IGoalsRepository goalsRepository, ITaskRepository taskRepository)
-        {
-            _goalsRepository = goalsRepository;
-            _taskRepository = taskRepository;
-        }
+    protected override async System.Threading.Tasks.Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
+    {
+        Task task = await _taskRepository.FindById(request.TaskId, cancellationToken);
 
-        protected override async System.Threading.Tasks.Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
-        {
-            Task task = await _taskRepository.FindById(request.TaskId);
+        if (task == null)
+            throw new Exception("The task doesn't exist");
 
-            if (task == null)
-                throw new Exception("The task doesn't exist");
+        Goal goal = request.GoalId.HasValue ? await _goalsRepository.FindById(request.GoalId.Value, cancellationToken) : null;
 
-            Goal goal = request.GoalId.HasValue ? await _goalsRepository.FindById(request.GoalId.Value) : null;
+        task.AssociatedTo = goal;
+        task.Title = request.Title;
+        task.PlannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ? 
+                           new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) : 
+                           null;
 
-            task.AssociatedTo = goal;
-            task.Title = request.Title;
-            task.PlannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ? 
-                               new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) : 
-                               null;
-
-            await _taskRepository.Update(task);
-            await _taskRepository.UnitOfWork.SaveEntitiesAsync();
-        }
+        await _taskRepository.Update(task);
+        await _taskRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     }
 }

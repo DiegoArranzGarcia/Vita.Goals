@@ -1,14 +1,6 @@
 ﻿using MediatR;
 using System;
 
-namespace Vita.Goals.Application.Commands.Goals
-{
-    public record UpdateGoalCommand : IRequest
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTimeOffset? AimDateStart { get; set; }
-        public DateTimeOffset? AimDateEnd { get; set; }
-    }
-}
+namespace Vita.Goals.Application.Commands.Goals;
+
+public record UpdateGoalCommand(Guid Id, string Title, string Description, DateTimeOffset? AimDateStart, DateTimeOffset? AimDateEnd) : IRequest;
