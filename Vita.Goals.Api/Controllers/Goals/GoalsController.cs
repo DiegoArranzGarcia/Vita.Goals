@@ -15,12 +15,25 @@ public class GoalsController : ControllerBase
     private readonly ISender _sender;
     private readonly IGoalQueryStore _goalQueryStore;
 
+    /// <summary>
+    /// Goals API operations
+    /// </summary>
+    /// <param name="mediator"></param>
+    /// <param name="goalQueryStore"></param>
     public GoalsController(IMediator mediator, IGoalQueryStore goalQueryStore)
     {
         _sender = mediator;
         _goalQueryStore = goalQueryStore;
     }
-
+    
+    /// <summary>
+    /// Gets goals that meets the filtering options
+    /// </summary>
+    /// <param name="showCompleted"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetGoals(bool? showCompleted = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default)
     {
