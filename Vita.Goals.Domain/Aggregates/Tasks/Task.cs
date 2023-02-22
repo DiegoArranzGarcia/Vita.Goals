@@ -1,6 +1,6 @@
 ﻿using Dawn;
 using System;
-using Vita.Core.Domain.Repositories;
+using Vita.Core.Domain;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 

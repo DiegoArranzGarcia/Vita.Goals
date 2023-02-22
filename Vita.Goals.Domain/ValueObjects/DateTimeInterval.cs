@@ -7,8 +7,8 @@ namespace Vita.Goals.Domain.ValueObjects;
 
 public class DateTimeInterval : ValueObject
 {
-    public DateTimeOffset Start { get; }
-    public DateTimeOffset End { get; }
+    public DateTimeOffset Start { get; init; }
+    public DateTimeOffset End { get; init; }
 
     public DateTimeInterval(DateTimeOffset start, DateTimeOffset end)
     {

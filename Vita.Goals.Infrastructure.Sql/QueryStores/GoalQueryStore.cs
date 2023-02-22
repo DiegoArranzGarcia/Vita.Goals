@@ -14,12 +14,12 @@ namespace Vita.Goals.Infrastructure.Sql.QueryStores;
 
 public class GoalQueryStore : IGoalQueryStore
 {
-    private const string GetGoalByIdQuery = @"select g.Id, g.Title, g.Description, g.CreatedOn, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status
+    private const string GetGoalByIdQuery = @"select g.Id, g.Title, g.Description, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status, g.CreatedOn
                                                   from Goals g 
                                                   inner join GoalStatus gs on g.GoalStatusId = gs.Id
                                                   where g.Id = @Id";
 
-    private const string GetGoalsCreatedByUserQuery = @"select g.Id, g.Title, g.Description, g.CreatedOn, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status
+    private const string GetGoalsCreatedByUserQuery = @"select g.Id, g.Title, g.Description, g.AimDate_Start as AimDateStart, g.AimDate_End as AimDateEnd, gs.Name as Status, g.CreatedOn
                                                               from Goals g
                                                         inner join GoalStatus gs on g.GoalStatusId = gs.Id
                                                              where CreatedBy = @UserId";

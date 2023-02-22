@@ -1,7 +1,7 @@
 using Dawn;
 using System;
 using System.Collections.Generic;
-using Vita.Core.Domain.Repositories;
+using Vita.Core.Domain;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Domain.ValueObjects;
 

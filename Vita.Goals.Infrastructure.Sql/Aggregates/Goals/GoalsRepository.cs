@@ -19,7 +19,7 @@ public class GoalsRepository : IGoalsRepository
 
     public async Task<Goal> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Goals.FindAsync(id, cancellationToken);
+        return await _context.Goals.FindAsync(new object[] { id }, cancellationToken);
     }
 
     public Task<Goal> Add(Goal goal)
