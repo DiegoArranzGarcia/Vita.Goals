@@ -54,6 +54,7 @@ stages:
         feedsToUse: 'select'
         vstsFeed: 'd4d4328d-23fb-4700-a85b-694186019d4e/5bee72dc-d135-4e9c-84ec-df7c2fe16086'
         versioningScheme: byBuildNumber
+        noCache: true
 
     - task: SonarCloudPrepare@1
       displayName: 'Prepare SonarCloud Analysis'
@@ -72,6 +73,7 @@ stages:
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
+        clean: true
 
     - task: DotNetCoreCLI@2
       displayName: 'Run Unit Tests'
