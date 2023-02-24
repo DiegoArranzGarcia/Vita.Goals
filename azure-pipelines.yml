@@ -73,6 +73,7 @@ stages:
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
+        clean: true
 
     - task: DotNetCoreCLI@2
       displayName: 'Run Unit Tests'
