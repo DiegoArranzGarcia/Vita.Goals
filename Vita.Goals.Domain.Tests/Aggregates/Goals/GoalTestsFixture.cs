@@ -27,7 +27,6 @@ public static class GoalTestsFixture
     internal static Goal CreateGoal()
     {
         return _fixture.Build<Goal>()
-                       .Without(x => x.Events)
                        .Without(x => x.Tasks)
                        .Create();
     }
