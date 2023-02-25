@@ -1,7 +1,6 @@
-﻿namespace Vita.Goals.Infrastructure.Sql.QueryStores.Configuration
+﻿namespace Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
+
+public interface IConnectionStringProvider
 {
-    public interface IConnectionStringProvider
-    {
-        string ConnectionString { get; }
-    }
+    string ConnectionString { get; }
 }

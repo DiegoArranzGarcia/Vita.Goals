@@ -1,8 +1,7 @@
 ﻿using Vita.Core.Domain.Events;
 
-namespace Vita.Goals.Domain.Aggregates.Goals
+namespace Vita.Goals.Domain.Aggregates.Goals;
+
+public class CreateGoalDomainEvent : DomainEvent
 {
-    public class CreateGoalDomainEvent : DomainEvent
-    {
-    }
 }

@@ -3,21 +3,20 @@ using System.Threading;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Task = System.Threading.Tasks.Task;
 
-namespace Vita.Goals.Application.Commands.Goals
+namespace Vita.Goals.Application.Commands.Goals;
+
+public class DeleteGoalCommandHandler : AsyncRequestHandler<DeleteGoalCommand>
 {
-    public class DeleteGoalCommandHandler : AsyncRequestHandler<DeleteGoalCommand>
+    private readonly IGoalsRepository _goalsRepository;
+
+    public DeleteGoalCommandHandler(IGoalsRepository goalsRepository)
     {
-        private readonly IGoalsRepository _goalsRepository;
+        _goalsRepository = goalsRepository;
+    }
 
-        public DeleteGoalCommandHandler(IGoalsRepository goalsRepository)
-        {
-            _goalsRepository = goalsRepository;
-        }
-
-        protected override async Task Handle(DeleteGoalCommand request, CancellationToken cancellationToken)
-        {
-            await _goalsRepository.Delete(request.Id);
-            await _goalsRepository.UnitOfWork.SaveEntitiesAsync();
-        }
+    protected override async Task Handle(DeleteGoalCommand request, CancellationToken cancellationToken)
+    {
+        await _goalsRepository.Delete(request.Id);
+        await _goalsRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Vita.Goals.Application.Queries.Goals;
 
-namespace Vita.Goals.Application.Queries.Tasks
+namespace Vita.Goals.Application.Queries.Tasks;
+
+public interface ITaskQueryStore
 {
-    public interface ITaskQueryStore
-    {
-        public Task<TaskDto> GetTaskById(Guid id);
-        public Task<IEnumerable<TaskDto>> GetTasksCreatedByUser(Guid userId, bool? showCompleted, DateTimeOffset? startDate, DateTimeOffset? endDate);
-    }
+    public Task<TaskDto> GetTaskById(Guid id, CancellationToken cancellationToken = default);
+    public Task<IEnumerable<TaskDto>> GetTasksCreatedByUser(Guid userId, string status = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null, CancellationToken cancellationToken = default);
 }
