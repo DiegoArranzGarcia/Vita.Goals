@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vita.Core.Domain.Repositories;
@@ -37,5 +39,10 @@ public class TaskRepository : ITaskRepository
     {
         var task = await FindById(id);
         _context.Remove(task);
+    }
+
+    public IEnumerable<Domain.Aggregates.Tasks.Task> Get(Func<Domain.Aggregates.Tasks.Task, bool> predicate)
+    {
+        return _context.Tasks.Where(predicate);
     }
 }

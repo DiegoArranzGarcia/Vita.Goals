@@ -3,7 +3,7 @@ using System.Threading;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Task = System.Threading.Tasks.Task;
 
-namespace Vita.Goals.Application.Commands.Goals;
+namespace Vita.Goals.Application.Commands.Tasks;
 
 public class DeleteTaskCommandHandler : AsyncRequestHandler<DeleteTaskCommand>
 {

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Vita.Goals.Application.Commands.Tasks;
 using MediatR;
 using System.Security.Claims;
-using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Queries.Tasks;
 
 namespace Vita.Goals.Api.Controllers.Tasks;
