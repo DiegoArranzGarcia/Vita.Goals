@@ -7,7 +7,7 @@ using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Application.Commands.Goals;
 
-public class ReadyGoalCommandHandler : AsyncRequestHandler<ReadyGoalCommand>
+public class ReadyGoalCommandHandler : IRequestHandler<ReadyGoalCommand>
 {
     private readonly IGoalsRepository _goalsRepository;
 
@@ -16,7 +16,7 @@ public class ReadyGoalCommandHandler : AsyncRequestHandler<ReadyGoalCommand>
         _goalsRepository = goalsRepository;
     }
 
-    protected override async Task Handle(ReadyGoalCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ReadyGoalCommand request, CancellationToken cancellationToken)
     {
         Goal goal = await _goalsRepository.FindById(request.Id, cancellationToken);
 

@@ -7,7 +7,7 @@ using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Application.Commands.Tasks;
 
-public class UpdateTaskCommandHandler : AsyncRequestHandler<UpdateTaskCommand>
+public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
 {
     private readonly IGoalsRepository _goalsRepository;
     private readonly ITaskRepository _taskRepository;
@@ -18,7 +18,7 @@ public class UpdateTaskCommandHandler : AsyncRequestHandler<UpdateTaskCommand>
         _taskRepository = taskRepository;
     }
 
-    protected override async System.Threading.Tasks.Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
+    public async System.Threading.Tasks.Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
     {
         Task task = await _taskRepository.FindById(request.TaskId, cancellationToken);
 

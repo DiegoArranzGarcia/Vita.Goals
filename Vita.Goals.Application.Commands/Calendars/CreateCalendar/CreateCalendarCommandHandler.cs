@@ -19,7 +19,7 @@ public class CreateCalendarCommandHandler : IRequestHandler<CreateCalendarComman
         _calendarServicesProviderFactory = calendarServicesProviderFactory;
     }
 
-    public async Task<Unit> Handle(CreateCalendarCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateCalendarCommand request, CancellationToken cancellationToken)
     {
         IEnumerable<LoginProviderDto> loginProviders = await _vitaIdentityApiClient.GetExternalLoginProviders(request.UserId);
         LoginProviderDto loginProvider = loginProviders.FirstOrDefault(x => x.Name == request.ProviderName);
@@ -30,7 +30,5 @@ public class CreateCalendarCommandHandler : IRequestHandler<CreateCalendarComman
         ICalendarServicesProvider calendarServicesProvider = _calendarServicesProviderFactory.CreateCalendarServicesProvider(loginProvider);
 
         await calendarServicesProvider.CreateCalendar(request.UserId);
-
-        return Unit.Value;
     }
 }

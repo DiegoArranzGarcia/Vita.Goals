@@ -3,4 +3,4 @@ using System;
 
 namespace Vita.Goals.Application.Commands.Goals;
 
-public record CompleteGoalCommand(Guid Id) : IRequest;    
+public record CompleteGoalCommand(Guid Id) : IRequest;

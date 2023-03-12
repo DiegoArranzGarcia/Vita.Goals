@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MinimalApi.Endpoint.Extensions;
 using Vita.Goals.Api;
 using Vita.Goals.Application.Commands;
 using Vita.Goals.Host.Infrastructure;
@@ -18,11 +19,14 @@ services.AddCustomCors(configuration);
 
 services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
+services.RegisterVitaHttpClients(configuration);
 services.ConfigureApiServices();
 services.ConfigureApplicationCommandServices();
 services.ConfigurePersistenceServices(configuration);
 
 var app = builder.Build();
+
+app.MapEndpoints();
 
 if (app.Environment.IsDevelopment())
 {   
@@ -43,7 +47,5 @@ app.UseCors("spa-cors");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();

@@ -5,7 +5,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Vita.Goals.Application.Commands.Goals;
 
-public class DeleteGoalCommandHandler : AsyncRequestHandler<DeleteGoalCommand>
+public class DeleteGoalCommandHandler : IRequestHandler<DeleteGoalCommand>
 {
     private readonly IGoalsRepository _goalsRepository;
 
@@ -14,7 +14,7 @@ public class DeleteGoalCommandHandler : AsyncRequestHandler<DeleteGoalCommand>
         _goalsRepository = goalsRepository;
     }
 
-    protected override async Task Handle(DeleteGoalCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteGoalCommand request, CancellationToken cancellationToken)
     {
         await _goalsRepository.Delete(request.Id);
         await _goalsRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

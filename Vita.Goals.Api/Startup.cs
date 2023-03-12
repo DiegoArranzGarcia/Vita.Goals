@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using MinimalApi.Endpoint.Extensions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
@@ -13,9 +13,10 @@ public static class Startup
 {
     public static void ConfigureApiServices(this IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddEndpoints();
 
         services.AddEndpointsApiExplorer();
+
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -26,9 +27,9 @@ public static class Startup
             });
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-            options.CustomOperationIds(apiDescription => apiDescription.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            options.EnableAnnotations();
         });
     }
 }
