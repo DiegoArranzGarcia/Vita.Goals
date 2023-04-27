@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.9.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="5.9.0" />
     <PackageReference Include="MediatR" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="MinimalApi.Endpoint" Version="1.3.0" />
@@ -20,5 +22,9 @@
     <ProjectReference Include="..\Vita.Goals.Application.Commands\Vita.Goals.Application.Commands.csproj" />
     <ProjectReference Include="..\Vita.Goals.Application.Queries\Vita.Goals.Application.Queries.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Vita.Goals.FunctionalTests" />
+	</ItemGroup>
 
 </Project>

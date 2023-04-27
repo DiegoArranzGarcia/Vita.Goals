@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Vita.Goals.Application.Queries.Goals;
 
-namespace Vita.Goals.Api.Endpoints.Goals.GetGoals;
-internal class GetGoalsEndpoint : IEndpoint<IResult, GetGoalsRequest, ClaimsPrincipal, CancellationToken>
+namespace Vita.Goals.Api.Endpoints.Goals.Get;
+internal class GetGoalsEndpoint : Endpoint<GetGoalsRequest, IEnumerable<GoalDto>>
 {
     private readonly IGoalQueryStore _goalQueryStore;
 
@@ -17,23 +13,25 @@ internal class GetGoalsEndpoint : IEndpoint<IResult, GetGoalsRequest, ClaimsPrin
         _goalQueryStore = goalQueryStore;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapGet("/api/goals", ([AsParameters] GetGoalsRequest request, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(request, user, cancellationToken))
-           .Produces<IEnumerable<GoalDto>>()
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Goals")
-           .RequireAuthorization();
+        Get("goals");
+        Policies("ApiScope");
+        Description(x => x.Produces<IEnumerable<GoalDto>>()
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Goals"));
     }
 
-    public async Task<IResult> HandleAsync(GetGoalsRequest request, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(GetGoalsRequest request, CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-            return Results.Unauthorized();
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(cancellationToken);
+            return;
+        }
 
         IEnumerable<GoalDto> goals = await _goalQueryStore.GetGoalsCreatedByUser(userId, request.ShowCompleted, request.StartDate, request.EndDate, cancellationToken);
 
-        return Results.Ok(goals);
+        await SendOkAsync(goals, cancellationToken);
     }
 }

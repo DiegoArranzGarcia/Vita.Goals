@@ -1,36 +1,35 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FastEndpoints;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using MinimalApi.Endpoint.Extensions;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
+using Vita.Goals.Application.Commands;
+
+using FastEndpoints.Swagger; 
 
 namespace Vita.Goals.Api;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public static class Startup
-
 {
     public static void ConfigureApiServices(this IServiceCollection services)
     {
-        services.AddEndpoints();
-
-        services.AddEndpointsApiExplorer();
-
-        services.AddSwaggerGen(options =>
+        services.AddFastEndpoints();
+        services.AddSwaggerDoc(settings => 
         {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "v1",
-                Title = "Goals API",
-                Description = "Vita Goals API for managing goals and tasks",
-            });
+            settings.Version = "v1";
+            settings.Title = "Goals API";
+            settings.Description = "Vita Goals API for managing goals and tasks";
 
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-            options.EnableAnnotations();
+            //options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            //options.EnableAnnotations();
+
+            //options.CustomSchemaIds((type) => type.Name!.EndsWith("Dto") ? type.Name[..^3] : type.Name);
         });
+
+        services.ConfigureApplicationCommandServices();
     }
 }
 

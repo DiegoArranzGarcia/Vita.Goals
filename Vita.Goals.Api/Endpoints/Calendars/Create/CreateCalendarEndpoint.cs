@@ -1,15 +1,12 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
+using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
 using Vita.Goals.Application.Commands.Calendars.CreateCalendar;
 
 namespace Vita.Goals.Api.Endpoints.Calendars.Create;
 
-internal class CreateCalendarEndpoint : IEndpoint<IResult, CreateCalendarRequest>
+internal class CreateCalendarEndpoint : Endpoint<CreateCalendarRequest>
 {
     private readonly ISender _sender;
 
@@ -18,20 +15,19 @@ internal class CreateCalendarEndpoint : IEndpoint<IResult, CreateCalendarRequest
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapPost("/api/calendars", ([FromBody] CreateCalendarRequest request) => HandleAsync(request))
-           .Produces(StatusCodes.Status204NoContent)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Calendars");
+        Post("calendars");
+        Description(x => x.Produces((int)HttpStatusCode.NoContent)
+                          .WithTags("Calendars"));
     }
 
-    public async Task<IResult> HandleAsync(CreateCalendarRequest request)
+    public async override Task HandleAsync(CreateCalendarRequest request, CancellationToken cancellationToken)
     {
         CreateCalendarCommand command = new(request.UserId, request.ProviderName);
 
-        await _sender.Send(command);
+        await _sender.Send(command, cancellationToken);
 
-        return Results.NoContent();
+        await SendNoContentAsync(cancellationToken);
     }
 }

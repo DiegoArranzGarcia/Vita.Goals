@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FastEndpoints;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -8,7 +9,7 @@ using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Delete;
-internal class DeleteGoalEndpoint : IEndpoint<IResult, Guid, ClaimsPrincipal, CancellationToken>
+internal class DeleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -17,24 +18,26 @@ internal class DeleteGoalEndpoint : IEndpoint<IResult, Guid, ClaimsPrincipal, Ca
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapDelete("/api/goals/{id:guid}", (Guid id, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(id, user, cancellationToken))
-           .Produces(StatusCodes.Status204NoContent)
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Goals")
-           .RequireAuthorization();
+        Delete("goals/{id:guid}");
+        Policies("ApiScope");
+        Description(x => x.Produces(StatusCodes.Status204NoContent)
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Goals"));
     }
 
-    public async Task<IResult> HandleAsync(Guid id, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-            return Results.Unauthorized();
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(cancellationToken);
+            return;
+        }
 
         DeleteGoalCommand deleteGoalCommand = new(id);
         await _sender.Send(deleteGoalCommand, cancellationToken);
 
-        return Results.NoContent();
+        await SendNoContentAsync(cancellationToken);
     }
 }

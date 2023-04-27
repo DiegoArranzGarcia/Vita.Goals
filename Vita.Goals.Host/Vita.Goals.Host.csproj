@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Startup.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.8.2" />
     <PackageReference Include="IdentityModel.AspNetCore" Version="4.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
@@ -34,4 +30,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+  	<InternalsVisibleTo Include="Vita.Goals.FunctionalTests" />
+  </ItemGroup>
+	
 </Project>

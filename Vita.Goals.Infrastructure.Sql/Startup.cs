@@ -25,6 +25,6 @@ public static class Startup
         services.AddScoped<IGoalQueryStore, GoalQueryStore>();
         services.AddScoped<ITaskQueryStore, TaskQueryStore>();
 
-        services.AddDbContext<GoalsDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<GoalsDbContext>(options => options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name)));
     }
 }

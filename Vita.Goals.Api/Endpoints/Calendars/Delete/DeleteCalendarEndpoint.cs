@@ -7,7 +7,7 @@ using MinimalApi.Endpoint;
 using Swashbuckle.AspNetCore.Annotations;
 using Vita.Goals.Application.Commands.Calendars.DeleteCalendar;
 
-namespace Vita.Goals.Api.Endpoints.Calendars;
+namespace Vita.Goals.Api.Endpoints.Calendars.Delete;
 
 internal class DeleteCalendarEndpoint : IEndpoint<IResult, Guid, DeleteCalendarRequest, CancellationToken>
 {

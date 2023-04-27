@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using FastEndpoints;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;
-internal class CreateGoalEndpoint : IEndpoint<IResult, CreateGoalRequest, ClaimsPrincipal, CancellationToken>
+internal class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -18,20 +19,22 @@ internal class CreateGoalEndpoint : IEndpoint<IResult, CreateGoalRequest, Claims
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapPost("/api/goals", ([FromBody] CreateGoalRequest request, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(request, user, cancellationToken))
-           .Produces(StatusCodes.Status201Created)
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Goals")
-           .RequireAuthorization();
+        Post("goals");
+        Policies("ApiScope");
+        Description(x => x.Produces(StatusCodes.Status201Created)
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Goals"));
     }
 
-    public async Task<IResult> HandleAsync(CreateGoalRequest request, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(CreateGoalRequest request, CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-            return Results.Unauthorized();
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(cancellationToken);
+            return;
+        }
 
         CreateGoalCommand command = new(request.Title, request.Description, userId, request.AimDateStart, request.AimDateEnd);
 
@@ -40,6 +43,6 @@ internal class CreateGoalEndpoint : IEndpoint<IResult, CreateGoalRequest, Claims
         //Response.Headers.Add("Access-Control-Allow-Headers", "Location");
         //Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-        return Results.CreatedAtRoute(routeName: $"api/goals/{createdGoalId}", routeValues: new { id = createdGoalId }, value: null);
+        await SendCreatedAtAsync(endpointName: $"api/goals/{createdGoalId}", routeValues: new { id = createdGoalId }, responseBody: new EmptyResponse(), cancellation: cancellationToken);
     }
 }
