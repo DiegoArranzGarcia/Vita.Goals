@@ -9,7 +9,7 @@ using Vita.Goals.Api;
 using Vita.Goals.Host.Extensions;
 using Vita.Goals.Host.Infrastructure;
 using Vita.Goals.Infrastructure.Sql;
-
+    
 var builder = WebApplication.CreateBuilder(args);
 
 IServiceCollection services = builder.Services;

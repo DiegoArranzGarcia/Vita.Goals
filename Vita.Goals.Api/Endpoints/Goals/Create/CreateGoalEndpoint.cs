@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FastEndpoints;
+using Vita.Goals.Api.Endpoints.Goals.GetById;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;
 internal class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
@@ -38,11 +39,16 @@ internal class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 
         CreateGoalCommand command = new(request.Title, request.Description, userId, request.AimDateStart, request.AimDateEnd);
 
-        Guid createdGoalId = await _sender.Send(command, cancellationToken);
+        Guid createdGoalId = await _sender.Send(command, cancellationToken);        
 
-        //Response.Headers.Add("Access-Control-Allow-Headers", "Location");
-        //Response.Headers.Add("Access-Control-Expose-Headers", "Location");
+        //HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Location");
+        //HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-        await SendCreatedAtAsync(endpointName: $"api/goals/{createdGoalId}", routeValues: new { id = createdGoalId }, responseBody: new EmptyResponse(), cancellation: cancellationToken);
+        await SendCreatedAtAsync<GetByIdEndpoint>
+        (
+            routeValues: new { id = createdGoalId }, 
+            responseBody: new EmptyResponse(), 
+            cancellation: cancellationToken
+        );
     }
 }

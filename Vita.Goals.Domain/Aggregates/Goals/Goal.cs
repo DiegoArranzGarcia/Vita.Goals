@@ -11,7 +11,7 @@ public class Goal : Entity
 {
     private string _title;
     private int _goalStatusId;
-    public GoalStatus GoalStatus { get; private set; }
+    public virtual GoalStatus GoalStatus { get; private set; }
     public string Description { get; set; }
     public DateTimeInterval AimDate { get; set; }
     public ICollection<Task> Tasks { get; set; }

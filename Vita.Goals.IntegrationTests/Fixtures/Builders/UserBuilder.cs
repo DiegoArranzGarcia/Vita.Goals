@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Vita.Goals.FunctionalTests.Builders;
+namespace Vita.Goals.FunctionalTests.Fixtures.Builders;
 public class UserBuilder
 {
     public static readonly Guid AliceUserId = new("4e871c74-248f-45e3-b5f2-72c94cb48753");

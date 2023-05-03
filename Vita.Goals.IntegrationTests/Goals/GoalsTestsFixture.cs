@@ -1,51 +1,13 @@
 ﻿using Bogus;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Respawn;
-using System.Data.Common;
-using Testcontainers.MsSql;
+using Vita.Goals.Api.Endpoints.Goals.Create;
 using Vita.Goals.Domain.Aggregates.Goals;
-using Vita.Goals.FunctionalTests.Middleware;
+using Vita.Goals.FunctionalTests.Fixtures.WebApplicationFactories;
 using Vita.Goals.Infrastructure.Sql;
-using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
-public class GoalsTestsFixture : WebApplicationFactory<Program>, IAsyncLifetime
+public class GoalsTestsFixture : WebApiApplicationFactory
 {
-    public MsSqlContainer? MsSqlContainer { get; private set; }
-    public Respawner? Respawner { get; private set; }
-
-    private string ConnectionString => $"Server={MsSqlContainer.Hostname},{MsSqlContainer.GetMappedPublicPort(1433)};Database=Vita.Goals.IntegrationTests;User Id=sa;Password=yourStrong(!)Password;TrustServerCertificate=True";
-
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureTestServices(services => services.AddAuthentication("TestAuthenticationScheme")
-                                                       .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestAuthenticationScheme", _ => { }));
-
-        builder.ConfigureServices(services =>
-        {
-            services.RemoveAll<DbContextOptions<GoalsDbContext>>();
-            services.RemoveAll<DbConnection>();
-
-            services.AddDbContext<GoalsDbContext>(options =>
-            {
-                options.UseSqlServer(ConnectionString, sqloptions =>
-                {
-                    sqloptions.MigrationsAssembly(typeof(GoalsDbContext).Assembly.GetName().Name);
-                });
-            });
-
-            services.RemoveAll<IConnectionStringProvider>();
-            services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(ConnectionString));
-        });
-
-    builder.UseEnvironment("IntegrationTests");
-    }
-
     public async Task<IReadOnlyCollection<Goal>> GoalsInTheDatabase(Guid userId)
     {
         using IServiceScope scope = Services.CreateScope();
@@ -60,44 +22,18 @@ public class GoalsTestsFixture : WebApplicationFactory<Program>, IAsyncLifetime
         return goals;
     }
 
-    public async Task InitializeAsync()
-    {
-        MsSqlContainer = new MsSqlBuilder().Build();
-        await MsSqlContainer.StartAsync();
-        await CreateDatabase();
-        Respawner = await ConfigureRespawner();
-    }
-
-    private Task CreateDatabase()
-    {
-        IServiceScope scope = Services.CreateScope();
-
-        IServiceProvider scopedServices = scope.ServiceProvider;
-        GoalsDbContext context = scopedServices.GetRequiredService<GoalsDbContext>();
-
-        return context.Database.EnsureCreatedAsync();
-    }
-
-    private Task<Respawner> ConfigureRespawner()
-    {
-        return Respawner.CreateAsync(ConnectionString, new RespawnerOptions()
+    public CreateGoalRequest BuildCreateGoalRequest() => new Faker<CreateGoalRequest>()
+        .CustomInstantiator((faker) =>
         {
-            TablesToIgnore = new Respawn.Graph.Table[] 
-            { 
-                new("__EFMigrationsHistory"), 
-                new("GoalStatus"), 
-                new("TaskStatus") 
-            }
-        });
-    }
+            DateTime start = faker.Date.Soon(7);
+            DateTime end = faker.Date.Soon(10, start);
 
-    Task IAsyncLifetime.DisposeAsync()
-    {
-        return MsSqlContainer!.StopAsync().ContinueWith(_ => MsSqlContainer.DisposeAsync().AsTask());
-    }
-
-    internal Task CleanDatabase()
-    {
-        return Respawner!.ResetAsync(ConnectionString);
-    }
+            return new CreateGoalRequest
+            (
+                Title: faker.Lorem.Sentence(5),
+                Description: faker.Lorem.Sentence(15),
+                AimDateStart: new DateTimeOffset(start),
+                AimDateEnd: new DateTimeOffset(end)
+            );
+        });    
 }
