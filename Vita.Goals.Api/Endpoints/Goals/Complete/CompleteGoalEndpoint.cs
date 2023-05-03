@@ -8,7 +8,7 @@ using Vita.Goals.Application.Commands.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Complete;
 
-internal class CompleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
+internal class CompleteGoalEndpoint : Endpoint<CompleteGoalRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -19,14 +19,14 @@ internal class CompleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
 
     public override void Configure()
     {
-        Put("goals/{id:guid}/complete");
+        Put("goals/{@id}/complete", r => new { r.GoalId });
         Policies("ApiScope");
         Description(x => x.Produces(StatusCodes.Status204NoContent)
                           .ProducesProblem(StatusCodes.Status401Unauthorized)
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(CompleteGoalRequest request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -34,7 +34,7 @@ internal class CompleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
             return;
         }
 
-        CompleteGoalCommand completeGoalCommand = new(id);
+        CompleteGoalCommand completeGoalCommand = new(request.GoalId);
         await _sender.Send(completeGoalCommand, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

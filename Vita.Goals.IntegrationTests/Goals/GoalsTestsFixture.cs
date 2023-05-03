@@ -8,13 +8,23 @@ namespace Vita.Goals.FunctionalTests.Goals;
 
 public class GoalsTestsFixture : WebApiApplicationFactory
 {
-    public async Task<IReadOnlyCollection<Goal>> GoalsInTheDatabase(Guid userId)
+    public async Task<Goal> AGoalInTheDatabase(Guid userId)
+    {
+        using IServiceScope scope = Services.CreateScope();
+        GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
+
+        IReadOnlyCollection<Goal> goals = await GoalsInTheDatabase(userId, count: 1);
+            
+        return goals.First();
+    }
+
+    public async Task<IReadOnlyCollection<Goal>> GoalsInTheDatabase(Guid userId, int count = 15)
     {
         using IServiceScope scope = Services.CreateScope();
         GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
         List<Goal> goals = new Faker<Goal>().CustomInstantiator((faker) => new Goal(title: faker.Lorem.Sentence(5), createdBy: userId, description: faker.Lorem.Sentence(15)))
-                                            .Generate(count: 15);
+                                            .Generate(count);
 
         context.Goals.AddRange(goals);
         await context.SaveChangesAsync();

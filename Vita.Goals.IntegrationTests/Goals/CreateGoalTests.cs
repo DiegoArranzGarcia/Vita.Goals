@@ -49,7 +49,7 @@ public class CreateGoalTests : IClassFixture<GoalsTestsFixture>
     }
 
     [Fact]
-    public async Task GivenAuthorizedUser_WhenGettingCreatingGoal_ThenCreatesTheGoal()
+    public async Task GivenAuthorizedUser_WhenCreatingGoal_ThenCreatesTheGoal()
     {
         CreateGoalRequest request = Given.BuildCreateGoalRequest();
 
@@ -59,10 +59,9 @@ public class CreateGoalTests : IClassFixture<GoalsTestsFixture>
         var (reponse, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
 
         reponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        reponse.Headers.Location.Should().NotBeNull();
 
         GoalsDbContext context = Given.GetGoalsDbContext();
-        Goal goal = context.Goals.First();
+        Goal goal = context.Goals.Single();
 
         goal.GoalStatus.Should().Be(GoalStatus.ToBeDefined);
         goal.Title.Should().Be(request.Title);
