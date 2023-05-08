@@ -35,5 +35,5 @@ public class Task : Entity
     {
         get => _title;
         set => _title = Guard.Argument(value, nameof(Title)).NotNull().NotEmpty();
-    }        
+    }
 }

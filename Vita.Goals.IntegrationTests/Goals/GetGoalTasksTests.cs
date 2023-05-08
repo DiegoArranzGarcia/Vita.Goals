@@ -2,58 +2,60 @@
 using FluentAssertions;
 using System.Net;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
+using Vita.Goals.Api.Endpoints.Goals.GetById;
+using Vita.Goals.Api.Endpoints.Goals.GetTasks;
+using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
-using Vita.Goals.Infrastructure.Sql;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
 [Collection(nameof(GoalsTestCollection))]
-public class CompleteGoalTests
+public class GetGoalTasksTests
 {
     private GoalsTestsFixture Given { get; }
 
-    public CompleteGoalTests(GoalsTestsFixture goalsTestsFixture)
+    public GetGoalTasksTests(GoalsTestsFixture goalsTestsFixture)
     {
         Given = goalsTestsFixture;
     }
 
     [Fact]
-    public async Task GivenUnauthenticatedUser_WhenCompletingGoal_ThenReturnsUnauthorized()
+    public async Task GivenUnauthenticatedUser_WhenGettingGoalTasks_ThenReturnsUnauthorized()
     {
-        Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
+        Goal goal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(goal.Id);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task GivenUnauthorizedUser_WhenCompletingGoal_ThenReturnsForbidden()
+    public async Task GivenUnauthorizedUser_WhenGettingGoalTasks_ThenReturnsForbidden()
     {
-        Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
+        Goal goal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(goal.Id);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
-
     [Fact]
-    public async Task GivenGoalOfOtherUser_WhenCompletingGoal_ThenReturnsForbidden()
+    public async Task GivenGoalOfOtherUser_WhenGettingGoalTasks_ThenReturnsForbidden()
     {
+        await Given.CleanDatabase();
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(aliceGoal.Id);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -61,10 +63,12 @@ public class CompleteGoalTests
     [Fact]
     public async Task GivenAuthorizedUserButUnexistentGoalWithId_WhenCompletingGoal_ThenReturnsNotFound()
     {
+        await Given.CleanDatabase();
+
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(Guid.NewGuid());
+        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(Guid.NewGuid());
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;
@@ -76,23 +80,22 @@ public class CompleteGoalTests
         problem.Instance.Should().NotBeNullOrEmpty();
     }
 
+
     [Fact]
-    public async Task GivenAuthorizedUserAndExistentGoalId_WhenCompletingGoal_ThenReturnsNoContent_And_UpdatesTheGoalStastusToComplete()
+    public async Task GivenGoalWithTaskOfAUser_WhenGettingGoalTasks_ThenReturnsOkWithTheGoalTasks()
     {
+        await Given.CleanDatabase();
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
+        IReadOnlyCollection<Domain.Aggregates.Tasks.Task> tasks = await Given.GoalTasksForGoalInTheDatabase(aliceGoal.Id);
 
         HttpClient httpClient = Given.CreateClient()
-                                     .WithIdentity(UserBuilder.AliceClaims);
+                                     .WithIdentity(UserBuilder.BobClaims);
 
+        var (response, goalTasksDto) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(aliceGoal.Id);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        GoalsDbContext context = Given.GetGoalsDbContext();
-        Goal updatedGoal = context.Goals.First(x => x.Id == aliceGoal.Id);
-
-        updatedGoal.GoalStatus.Should().Be(GoalStatus.Completed);
-        updatedGoal.Should().BeEquivalentTo(aliceGoal, options => options.Excluding(x => x.GoalStatus));
+        goalTasksDto.Should().NotBeNullOrEmpty()
+                    .And.HaveSameCount(tasks);
     }
 }

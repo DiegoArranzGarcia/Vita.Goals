@@ -9,7 +9,8 @@ using Vita.Goals.FunctionalTests.Fixtures.Extensions;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
-public class GetGoalsTests : IClassFixture<GoalsTestsFixture>
+[Collection(nameof(GoalsTestCollection))]
+public class GetGoalsTests
 {
     private GoalsTestsFixture Given { get; }
 
@@ -49,7 +50,7 @@ public class GetGoalsTests : IClassFixture<GoalsTestsFixture>
 
         HttpClient httpClient = Given.CreateClient().WithIdentity(UserBuilder.AliceClaims);
 
-        (HttpResponseMessage response, IEnumerable<GoalDto>? goals) = 
+        (HttpResponseMessage response, IEnumerable<GoalDto>? goals) =
             await httpClient.GETAsync<GetGoalsEndpoint, GetGoalsRequest, IEnumerable<GoalDto>>(new GetGoalsRequest());
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -57,6 +58,35 @@ public class GetGoalsTests : IClassFixture<GoalsTestsFixture>
         goals.Should().NotBeNull()
                   .And.NotBeEmpty()
                   .And.HaveSameCount(databaseGoals);
+    }
+
+    [Theory]
+    [InlineData(0, 0, true)]
+    [InlineData(1, 0, false)]
+    [InlineData(0, 1, false)]
+    public async Task GivenAGoalWithStartEndDates_WhenGettingGoalsWithoutShowCompletedFilter_ThenDoesntReturnTheGoal(
+        int endDatePlusDays,
+        int startDateLessDays,
+        bool shouldBeRetreived)
+    {
+        await Given.CleanDatabase();
+
+        Goal goal = await Given.AGoalWithDateTimeIntervalInTheDatabase(UserBuilder.AliceUserId);
+
+        HttpClient httpClient = Given.CreateClient().WithIdentity(UserBuilder.AliceClaims);
+        GetGoalsRequest request = new
+        (
+            StartDate: goal.AimDate.End.AddDays(endDatePlusDays),
+            EndDate: goal.AimDate.Start.AddDays(-startDateLessDays)
+        );
+
+        (HttpResponseMessage response, IEnumerable<GoalDto>? goals) =
+            await httpClient.GETAsync<GetGoalsEndpoint, GetGoalsRequest, IEnumerable<GoalDto>>(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        goals.Should().NotBeNull();
+        goals.Should().HaveCount(shouldBeRetreived ? 1 : 0);
     }
 
     [Fact]
@@ -67,7 +97,7 @@ public class GetGoalsTests : IClassFixture<GoalsTestsFixture>
 
         HttpClient httpClient = Given.CreateClient().WithIdentity(UserBuilder.BobClaims);
 
-        (HttpResponseMessage response, IEnumerable<GoalDto>? goals) = 
+        (HttpResponseMessage response, IEnumerable<GoalDto>? goals) =
             await httpClient.GETAsync<GetGoalsEndpoint, GetGoalsRequest, IEnumerable<GoalDto>>(new GetGoalsRequest());
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -17,10 +17,10 @@ public class CompleteGoalCommandHandler : IRequestHandler<CompleteGoalCommand>
 
     public async Task Handle(CompleteGoalCommand request, CancellationToken cancellationToken)
     {
-        Goal goal = await _goalsRepository.FindById(request.Id, cancellationToken);
+        Goal goal = await _goalsRepository.FindById(request.Id, cancellationToken) ?? throw new Exception("The goal wasn't found");
 
-        if (goal is null)
-            throw new Exception("The goal wasn't found");
+        if (goal.CreatedBy != request.User.Id)
+            throw new UnauthorizedAccessException("The goal doesn't belong to the user");
 
         goal.Complete();
 

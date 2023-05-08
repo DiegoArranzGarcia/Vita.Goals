@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.TestHost;
 using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Security.Claims;
 using Vita.Goals.FunctionalTests.Fixtures.Authentication;
 

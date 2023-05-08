@@ -1,12 +1,6 @@
 ﻿using FastEndpoints;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using Vita.Goals.Application.Queries.Goals;
-using Vita.Goals.Application.Queries.Tasks;
-using Vita.Goals.Domain.Aggregates.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.GetTasks;
 internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
@@ -20,7 +14,7 @@ internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
 
     public override void Configure()
     {
-        Get("goals/{id:guid}/tasks");
+        Get("goals/{id}/tasks");
         Policies("ApiScope");
         Description(x => x.Produces<IEnumerable<GoalTaskDto>>()
                           .ProducesProblem(StatusCodes.Status404NotFound)

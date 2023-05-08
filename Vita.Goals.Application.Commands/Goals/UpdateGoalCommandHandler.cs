@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 using Task = System.Threading.Tasks.Task;

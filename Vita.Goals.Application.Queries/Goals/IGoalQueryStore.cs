@@ -10,8 +10,7 @@ public interface IGoalQueryStore
     public Task<GoalDto> GetGoalById(Guid id, CancellationToken cancellationToken = default);
     public Task<IEnumerable<GoalTaskDto>> GetGoalTasks(Guid id, CancellationToken cancellationToken = default);
     public Task<IEnumerable<GoalDto>> GetGoalsCreatedByUser(Guid userId,
-                                                            bool? showCompleted,
-                                                            DateTimeOffset? startDate,
-                                                            DateTimeOffset? endDate,
+                                                            DateTimeOffset? startDate = null,
+                                                            DateTimeOffset? endDate = null,
                                                             CancellationToken cancellationToken = default);
 }

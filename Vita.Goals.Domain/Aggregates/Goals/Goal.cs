@@ -23,7 +23,7 @@ public class Goal : Entity
 
     }
 
-    public Goal(string title, Guid createdBy, string description = null, DateTimeInterval aimDate = null) : this()
+    public Goal(string title, Guid createdBy, string description = null, DateTimeInterval aimDate = null, IReadOnlyCollection<Task> tasks = null) : this()
     {
         Id = Guid.NewGuid();
         Title = title;

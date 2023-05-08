@@ -29,8 +29,8 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
 
         task.AssociatedTo = goal;
         task.Title = request.Title;
-        task.PlannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ? 
-                           new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) : 
+        task.PlannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ?
+                           new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) :
                            null;
 
         await _taskRepository.Update(task);

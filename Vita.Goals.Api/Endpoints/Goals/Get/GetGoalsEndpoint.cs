@@ -30,7 +30,7 @@ internal class GetGoalsEndpoint : Endpoint<GetGoalsRequest, IEnumerable<GoalDto>
             return;
         }
 
-        IEnumerable<GoalDto> goals = await _goalQueryStore.GetGoalsCreatedByUser(userId, request.ShowCompleted, request.StartDate, request.EndDate, cancellationToken);
+        IEnumerable<GoalDto> goals = await _goalQueryStore.GetGoalsCreatedByUser(userId, request.StartDate, request.EndDate, cancellationToken);
 
         await SendOkAsync(goals, cancellationToken);
     }

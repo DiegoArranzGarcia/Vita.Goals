@@ -1,10 +1,7 @@
 ﻿using FastEndpoints;
+using FastEndpoints.Swagger;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 using Vita.Goals.Application.Commands;
-
-using FastEndpoints.Swagger; 
 
 namespace Vita.Goals.Api;
 
@@ -15,7 +12,8 @@ public static class Startup
     public static void ConfigureApiServices(this IServiceCollection services)
     {
         services.AddFastEndpoints();
-        services.AddSwaggerDoc(settings => 
+
+        services.AddSwaggerDoc(settings =>
         {
             settings.Version = "v1";
             settings.Title = "Goals API";

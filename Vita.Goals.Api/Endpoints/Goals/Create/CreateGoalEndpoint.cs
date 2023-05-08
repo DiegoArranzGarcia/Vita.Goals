@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using System.Security.Claims;
-using Vita.Goals.Application.Commands.Goals;
-using Microsoft.AspNetCore.Builder;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using FastEndpoints;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
+using Vita.Goals.Application.Commands.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;
-internal class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
+public class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -39,15 +34,15 @@ internal class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 
         CreateGoalCommand command = new(request.Title, request.Description, userId, request.AimDateStart, request.AimDateEnd);
 
-        Guid createdGoalId = await _sender.Send(command, cancellationToken);        
+        Guid createdGoalId = await _sender.Send(command, cancellationToken);
 
         //HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Location");
         //HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
 
-        await SendCreatedAtAsync<GetByIdEndpoint>
+        await SendCreatedAtAsync<GetGoalEndpoint>
         (
-            routeValues: new { id = createdGoalId }, 
-            responseBody: new EmptyResponse(), 
+            routeValues: new { id = createdGoalId },
+            responseBody: new EmptyResponse(),
             cancellation: cancellationToken
         );
     }

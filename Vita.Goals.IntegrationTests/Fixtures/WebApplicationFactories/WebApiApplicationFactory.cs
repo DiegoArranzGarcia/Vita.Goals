@@ -14,7 +14,7 @@ namespace Vita.Goals.FunctionalTests.Fixtures.WebApplicationFactories;
 
 public class WebApiApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public MsSqlContainer? MsSqlContainer { get; private set; }
+    public MsSqlContainer? MsSqlContainer { get; private set; } = new MsSqlBuilder().Build();
     public Respawner? Respawner { get; private set; }
 
     private string ConnectionString => $"Server={MsSqlContainer!.Hostname},{MsSqlContainer.GetMappedPublicPort(1433)};Database=Vita.Goals.IntegrationTests;User Id=sa;Password=yourStrong(!)Password;TrustServerCertificate=True";
@@ -46,7 +46,6 @@ public class WebApiApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
 
     public async Task InitializeAsync()
     {
-        MsSqlContainer = new MsSqlBuilder().Build();
         await MsSqlContainer.StartAsync();
         await CreateDatabase();
         Respawner = await ConfigureRespawner();

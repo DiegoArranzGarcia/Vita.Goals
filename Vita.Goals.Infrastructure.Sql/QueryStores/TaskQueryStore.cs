@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Vita.Core.Domain;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
 

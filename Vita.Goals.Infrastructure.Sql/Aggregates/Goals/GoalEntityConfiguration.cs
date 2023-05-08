@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 using Vita.Core.Infrastructure.Sql;
 using Vita.Goals.Domain.Aggregates.Goals;
 

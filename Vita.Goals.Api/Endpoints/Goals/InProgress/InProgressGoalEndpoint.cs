@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.InProgress;
 
@@ -17,7 +18,7 @@ internal class InProgressGoalEndpoint : Endpoint<Guid, EmptyResponse>
 
     public override void Configure()
     {
-        Put("goals/{id:guid}/in-progress");
+        Put("goals/{id}/in-progress");
         Policies("ApiScope");
         Description(x => x.Produces(StatusCodes.Status204NoContent)
                           .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -32,7 +33,7 @@ internal class InProgressGoalEndpoint : Endpoint<Guid, EmptyResponse>
             return;
         }
 
-        InProgressGoalCommand command = new(id);
+        InProgressGoalCommand command = new(id, new User(userId));
         await _sender.Send(command, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

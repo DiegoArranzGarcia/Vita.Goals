@@ -1,14 +1,13 @@
 ﻿using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Complete;
 
-internal class CompleteGoalEndpoint : Endpoint<CompleteGoalRequest, EmptyResponse>
+internal class CompleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -19,14 +18,15 @@ internal class CompleteGoalEndpoint : Endpoint<CompleteGoalRequest, EmptyRespons
 
     public override void Configure()
     {
-        Put("goals/{@id}/complete", r => new { r.GoalId });
+        Put("goals/{id}/complete");
         Policies("ApiScope");
         Description(x => x.Produces(StatusCodes.Status204NoContent)
                           .ProducesProblem(StatusCodes.Status401Unauthorized)
                           .WithTags("Goals"));
+        DontCatchExceptions();
     }
 
-    public async override Task HandleAsync(CompleteGoalRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -34,7 +34,7 @@ internal class CompleteGoalEndpoint : Endpoint<CompleteGoalRequest, EmptyRespons
             return;
         }
 
-        CompleteGoalCommand completeGoalCommand = new(request.GoalId);
+        CompleteGoalCommand completeGoalCommand = new(id, new User(userId));
         await _sender.Send(completeGoalCommand, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

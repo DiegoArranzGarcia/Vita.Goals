@@ -1,10 +1,6 @@
 ﻿using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
 
@@ -20,7 +16,7 @@ internal class DeleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
 
     public override void Configure()
     {
-        Delete("goals/{id:guid}");
+        Delete("goals/{id}");
         Policies("ApiScope");
         Description(x => x.Produces(StatusCodes.Status204NoContent)
                           .ProducesProblem(StatusCodes.Status401Unauthorized)

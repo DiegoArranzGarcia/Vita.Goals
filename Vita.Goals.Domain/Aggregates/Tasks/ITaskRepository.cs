@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
-using System;
-using Vita.Core.Domain.Repositories;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Vita.Core.Domain.Repositories;
 
 namespace Vita.Goals.Domain.Aggregates.Tasks;
 

@@ -3,7 +3,6 @@ using IdentityModel.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Vita.Goals.Application.Commands.Services.CalendarServiceProviders;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Infrastructure.Clients.Identity;
@@ -29,7 +28,7 @@ internal class GoogleCalendarServiceProvider : ICalendarServicesProvider
         AccessTokenDto googleAccessToken = await _vitaIdentityApiClient.GetLoginProviderUserAccessToken(userId, _loginProvider.Id);
         _calendarService.HttpClient.SetBearerToken(googleAccessToken.Token);
 
-        IEnumerable<Domain.Aggregates.Tasks.Task> tasks = _taskRepository.Get((task) => task.AssociatedTo.CreatedBy == userId && 
+        IEnumerable<Domain.Aggregates.Tasks.Task> tasks = _taskRepository.Get((task) => task.AssociatedTo.CreatedBy == userId &&
                                                                                         task.TaskStatus != Domain.Aggregates.Tasks.TaskStatus.Completed);
 
         IEnumerable<Domain.Aggregates.Tasks.Task> scheduledTasks = tasks.Where(x => x.PlannedDate is not null);

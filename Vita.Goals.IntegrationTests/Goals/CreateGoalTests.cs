@@ -1,12 +1,7 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 using Vita.Goals.Api.Endpoints.Goals.Create;
-using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
@@ -14,7 +9,8 @@ using Vita.Goals.Infrastructure.Sql;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
-public class CreateGoalTests : IClassFixture<GoalsTestsFixture>
+[Collection(nameof(GoalsTestCollection))]
+public class CreateGoalTests
 {
     private GoalsTestsFixture Given { get; }
 
@@ -26,39 +22,40 @@ public class CreateGoalTests : IClassFixture<GoalsTestsFixture>
     [Fact]
     public async Task GivenUnauthenticatedUser_WhenCreatingGoal_ThenReturnsUnauthorized()
     {
-        CreateGoalRequest request = Given.BuildCreateGoalRequest();
+        CreateGoalRequest request = GoalsTestsFixture.BuildCreateGoalRequest();
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (reponse, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
+        var (response, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
 
-        reponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
     public async Task GivenUnauthorizedUser_WhenCreatingGoal_ThenReturnsForbidden()
     {
-        CreateGoalRequest request = Given.BuildCreateGoalRequest();
+        CreateGoalRequest request = GoalsTestsFixture.BuildCreateGoalRequest();
 
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (reponse, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
+        var (response, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
 
-        reponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task GivenAuthorizedUser_WhenCreatingGoal_ThenCreatesTheGoal()
     {
-        CreateGoalRequest request = Given.BuildCreateGoalRequest();
+        await Given.CleanDatabase();
+        CreateGoalRequest request = GoalsTestsFixture.BuildCreateGoalRequest();
 
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (reponse, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
+        var (response, _) = await httpClient.POSTAsync<CreateGoalEndpoint, CreateGoalRequest, EmptyResponse>(request);
 
-        reponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         GoalsDbContext context = Given.GetGoalsDbContext();
         Goal goal = context.Goals.Single();
@@ -70,6 +67,6 @@ public class CreateGoalTests : IClassFixture<GoalsTestsFixture>
         goal.AimDate.End.Should().Be(request.AimDateEnd);
         goal.CreatedBy.Should().Be(UserBuilder.AliceUserId);
 
-        reponse.Headers.Location.Should().Be($"/api/goals/{goal.Id}");
+        response.Headers.Location.Should().Be($"/api/goals/{goal.Id}");
     }
 }
