@@ -17,7 +17,7 @@ public class WebApiApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
     public MsSqlContainer? MsSqlContainer { get; private set; } = new MsSqlBuilder().Build();
     public Respawner? Respawner { get; private set; }
 
-    private string ConnectionString => $"Server={MsSqlContainer!.Hostname},{MsSqlContainer.GetMappedPublicPort(1433)};Database=Vita.Goals.IntegrationTests;User Id=sa;Password=yourStrong(!)Password;TrustServerCertificate=True";
+    private string ConnectionString => $"Server={MsSqlContainer!.Hostname},{MsSqlContainer.GetMappedPublicPort(1433)};Database=Vita.Goals.IntegrationTests;User Id=sa;Password=yourStrong(!)Password;TrustServerCertificate=True;MultipleActiveResultSets=true;";
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

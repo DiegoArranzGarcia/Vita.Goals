@@ -46,7 +46,7 @@ public class GetGoalTests
     }
 
     [Fact]
-    public async Task GivenGoalOfOtherUser_WhenCompletingGoal_ThenReturnsForbidden()
+    public async Task GivenGoalOfOtherUser_WhenGettingGoal_ThenReturnsForbidden()
     {
         await Given.CleanDatabase();
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
@@ -60,7 +60,7 @@ public class GetGoalTests
     }
 
     [Fact]
-    public async Task GivenAuthorizedUserButUnexistentGoalWithId_WhenCompletingGoal_ThenReturnsNotFound()
+    public async Task GivenAuthorizedUserButUnexistentGoalWithId_WhenGettingGoal_ThenReturnsNotFound()
     {
         await Given.CleanDatabase();
 
@@ -69,7 +69,7 @@ public class GetGoalTests
 
         var (response, _) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(Guid.NewGuid());
 
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound, because: response.ReasonPhrase);
         Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;
 
         problem.Should().NotBeNull();
@@ -96,8 +96,8 @@ public class GetGoalTests
         goalDto.Id.Should().Be(goal.Id);
         goalDto.Title.Should().Be(goal.Title);
         goalDto.Description.Should().Be(goal.Description);
-        goalDto.AimDateStart.Should().Be(goal.AimDate.Start);
-        goalDto.AimDateEnd.Should().Be(goal.AimDate.End);
+        goalDto.AimDateStart.Should().Be(goal.AimDate!.Start);
+        goalDto.AimDateEnd.Should().Be(goal.AimDate!.End);
         goalDto.Status.Should().Be(GoalStatus.ToBeDefined.Name);
         goalDto.CreatedOn.Should().BeCloseTo(goal.CreatedOn, TimeSpan.FromSeconds(1));
     }

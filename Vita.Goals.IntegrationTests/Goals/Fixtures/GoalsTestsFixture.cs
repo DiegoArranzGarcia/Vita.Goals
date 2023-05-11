@@ -13,7 +13,7 @@ public class GoalsTestsFixture : WebApiApplicationFactory
     public async Task<Goal> AGoalInTheDatabase(Guid userId)
     {
         using IServiceScope scope = Services.CreateScope();
-        GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
+        using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
         IReadOnlyCollection<Goal> goals = await GoalsInTheDatabase(userId, count: 1);
 
@@ -23,7 +23,7 @@ public class GoalsTestsFixture : WebApiApplicationFactory
     public async Task<Goal> AGoalWithDateTimeIntervalInTheDatabase(Guid userId)
     {
         using IServiceScope scope = Services.CreateScope();
-        GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
+        using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
         DateTimeInterval range = CreateDateTimeInterval();
 
@@ -45,7 +45,7 @@ public class GoalsTestsFixture : WebApiApplicationFactory
     public async Task<IReadOnlyCollection<Goal>> GoalsInTheDatabase(Guid userId, int count = 15)
     {
         using IServiceScope scope = Services.CreateScope();
-        GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
+        using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
         List<Goal> goals = new Faker<Goal>().CustomInstantiator(faker => new Goal(title: faker.Lorem.Sentence(5), createdBy: userId, description: faker.Lorem.Sentence(15)))
                                             .Generate(count);
@@ -91,14 +91,14 @@ public class GoalsTestsFixture : WebApiApplicationFactory
     public async Task<IReadOnlyCollection<Domain.Aggregates.Tasks.Task>> GoalTasksForGoalInTheDatabase(Guid goalId, int count = 15)
     {
         using IServiceScope scope = Services.CreateScope();
-        GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
+        using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
-        Goal goal = context.Goals.Find(goalId);
+        Goal? goal = await context.Goals.FindAsync(goalId);
 
         List<Domain.Aggregates.Tasks.Task> tasks = new Faker<Domain.Aggregates.Tasks.Task>().CustomInstantiator(faker => new Domain.Aggregates.Tasks.Task
         (
             title: faker.Lorem.Sentence(5),
-            associatedTo: goal
+            associatedTo: goal!
         )).Generate(count);
 
         context.Tasks.AddRange(tasks);

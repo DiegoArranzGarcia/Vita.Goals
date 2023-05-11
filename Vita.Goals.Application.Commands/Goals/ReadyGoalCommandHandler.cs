@@ -19,8 +19,8 @@ public class ReadyGoalCommandHandler : IRequestHandler<ReadyGoalCommand>
     {
         Goal goal = await _goalsRepository.FindById(request.Id, cancellationToken);
 
-        if (goal == null)
-            throw new Exception("The goal wasn't found");
+        if (goal.CreatedBy != request.User.Id)
+            throw new UnauthorizedAccessException("The goal doesn't belong to the user");
 
         goal.Ready();
 

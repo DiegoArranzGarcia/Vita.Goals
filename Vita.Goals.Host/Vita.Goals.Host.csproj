@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+	<Nullable>enable</Nullable>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <StartupObject></StartupObject>
     <UserSecretsId>0b83084e-2da1-4bd3-9704-4bd12d6734d2</UserSecretsId>
