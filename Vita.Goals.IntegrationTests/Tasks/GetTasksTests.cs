@@ -6,7 +6,7 @@ using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
-using Vita.Goals.FunctionalTests.Tasks.Fixture;
+using Vita.Goals.FunctionalTests.Tasks.Fixtures;
 
 namespace Vita.Goals.FunctionalTests.Tasks;
 
@@ -77,7 +77,6 @@ public class GetTasksTests
         HttpClient httpClient = Given.CreateClient().WithIdentity(UserBuilder.AliceClaims);
         GetTasksRequest request = new
         (
-
             StartDate: task.PlannedDate.End.AddDays(endDatePlusDays),
             EndDate: task.PlannedDate.Start.AddDays(-startDateLessDays)
         );

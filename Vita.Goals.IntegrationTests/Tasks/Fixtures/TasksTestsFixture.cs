@@ -1,13 +1,14 @@
 ﻿using Bogus;
 using Microsoft.Extensions.DependencyInjection;
 using Vita.Goals.Api.Endpoints.Tasks.Create;
+using Vita.Goals.Api.Endpoints.Tasks.Update;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.WebApplicationFactories;
 using Vita.Goals.Infrastructure.Sql;
 
-namespace Vita.Goals.FunctionalTests.Tasks.Fixture;
+namespace Vita.Goals.FunctionalTests.Tasks.Fixtures;
 
 public class TasksTestsFixture : WebApiApplicationFactory
 {
@@ -44,7 +45,7 @@ public class TasksTestsFixture : WebApiApplicationFactory
         List<Domain.Aggregates.Tasks.Task> tasks = Enumerable.Range(0, count)
                                                              .Select(_ => new TaskBuilder().WithGoal(goal).Build())
                                                              .ToList();
-        
+
         context.Tasks.AddRange(tasks);
         await context.SaveChangesAsync();
 
@@ -75,11 +76,25 @@ public class TasksTestsFixture : WebApiApplicationFactory
             DateTimeInterval range = new DateTimeIntervalBuilder().Build();
 
             return new CreateTaskRequest
-            (               
+            (
                 Title: faker.Lorem.Sentence(5),
                 GoalId: goalId,
                 PlannedDateStart: range.Start,
                 PlannedDateEnd: range.End
             );
-        });    
+        });
+
+    public static UpdateTaskRequest BuildCreateUpdateRequest(Guid goalId) => new Faker<UpdateTaskRequest>()
+        .CustomInstantiator(faker =>
+        {
+            DateTimeInterval range = new DateTimeIntervalBuilder().Build();
+
+            return new UpdateTaskRequest
+            (
+                Title: faker.Lorem.Sentence(5),
+                GoalId: goalId,
+                PlannedDateStart: range.Start,
+                PlannedDateEnd: range.End
+            );
+        });
 }

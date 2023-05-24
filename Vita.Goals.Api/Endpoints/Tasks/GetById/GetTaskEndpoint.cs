@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Vita.Goals.Application.Queries.Tasks;
 
 namespace Vita.Tasks.Api.Endpoints.Tasks.GetById;
@@ -11,7 +12,8 @@ public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
     {
         _taskQueryStore = taskQueryStore;
     }
-
+    
+    /// <inheritdoc/>
     public override void Configure()
     {
         Get("tasks/{id}");
@@ -23,16 +25,22 @@ public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
                           .WithTags("Tasks"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken ct)
     {
-        TaskDto task = await _taskQueryStore.GetTaskById(id, cancellationToken);
-
-        if (task == null)
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
-            await SendNotFoundAsync(cancellationToken);
+            await SendUnauthorizedAsync(ct);
             return;
         }
 
-        await SendOkAsync(task, cancellationToken);
+        TaskDto task = await _taskQueryStore.GetTaskById(userId, id, ct);
+
+        if (task == null)
+        {
+            await SendNotFoundAsync(ct);
+            return;
+        }
+
+        await SendOkAsync(task, ct);
     }
 }

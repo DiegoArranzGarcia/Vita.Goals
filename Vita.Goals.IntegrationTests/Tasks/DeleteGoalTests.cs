@@ -6,7 +6,7 @@ using Vita.Goals.Api.Endpoints.Tasks.Delete;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
-using Vita.Goals.FunctionalTests.Tasks.Fixture;
+using Vita.Goals.FunctionalTests.Tasks.Fixtures;
 
 namespace Vita.Goals.FunctionalTests.Tasks;
 

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Vita.Goals.Infrastructure.Sql.QueryStores;
 
@@ -19,17 +20,19 @@ public class TaskQueryStore : ITaskQueryStore
         _connectionStringProvider = connectionStringProvider ?? throw new ArgumentNullException(nameof(connectionStringProvider));
     }
 
-    public async Task<TaskDto> GetTaskById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TaskDto> GetTaskById(Guid userId, Guid id, CancellationToken cancellationToken = default)
     {
-        const string GetTaskByIdQuery = @"select t.Id as TaskId, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
-                                                from Tasks t
-                                                join TaskStatus ts on t.TaskStatusId = ts.Id
-                                               where t.Id = @Id";
-
         using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
         connection.Open();
 
-        CommandDefinition commandDefinition = new(GetTaskByIdQuery, parameters: new { Id = id }, cancellationToken: cancellationToken);
+        await CheckUserHasAccessToGoal(userId, id, connection, cancellationToken);
+
+        const string getTaskByIdQuery = @"select t.Id, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
+                                            from Tasks t
+                                            join TaskStatus ts on t.TaskStatusId = ts.Id
+                                           where t.Id = @Id";
+
+        CommandDefinition commandDefinition = new(getTaskByIdQuery, parameters: new { Id = id }, cancellationToken: cancellationToken);
 
         return await connection.QueryFirstAsync<TaskDto>(commandDefinition);
     }
@@ -40,19 +43,16 @@ public class TaskQueryStore : ITaskQueryStore
                                                                   DateTimeOffset? endDate = null,
                                                                   CancellationToken cancellationToken = default)
     {
-
-        
-
-        const string GetTasksCreatedByUserQuery = @"select t.Id as TaskId, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
-                                                          from Tasks t
-                                                    inner join TaskStatus ts on t.TaskStatusId = ts.Id
-                                                    left join Goals g on t.AssociatedToId = g.Id
-                                                    where g.CreatedBy = @UserId";
+        const string getTasksCreatedByUserQuery = @"select t.Id, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
+                                                      from Tasks t
+                                                inner join TaskStatus ts on t.TaskStatusId = ts.Id
+                                                 left join Goals g on t.AssociatedToId = g.Id
+                                                     where g.CreatedBy = @UserId";
 
         using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
         connection.Open();
 
-        var sqlQuery = GetTasksCreatedByUserQuery;
+        var sqlQuery = getTasksCreatedByUserQuery;
 
         if (startDate.HasValue && endDate.HasValue)
             sqlQuery += $@" and (@Start <= t.PlannedDate_End and t.PlannedDate_Start <= @End)";
@@ -67,4 +67,21 @@ public class TaskQueryStore : ITaskQueryStore
 
         return await connection.QueryAsync<TaskDto>(commandDefinition);
     }
+
+    private static async Task CheckUserHasAccessToGoal(Guid userId, Guid id, SqlConnection connection, CancellationToken cancellationToken)
+    {
+        const string authorizationQuery = @"select g.CreatedBy                 
+                                              from Tasks t
+                                              join Goals g on t.AssociatedToId = g.Id
+                                             where t.Id = @Id";
+
+        CommandDefinition commandDefinition = new(authorizationQuery, parameters: new { id }, cancellationToken: cancellationToken);
+        dynamic result = await connection.QueryFirstOrDefaultAsync<dynamic>(commandDefinition) ??
+                         throw new KeyNotFoundException();
+
+        Guid createdBy = (Guid)result.CreatedBy;
+        if (createdBy != userId)
+            throw new UnauthorizedAccessException();
+    }
+
 }
