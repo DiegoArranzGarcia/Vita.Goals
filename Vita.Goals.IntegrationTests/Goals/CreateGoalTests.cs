@@ -5,6 +5,7 @@ using Vita.Goals.Api.Endpoints.Goals.Create;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
+using Vita.Goals.FunctionalTests.Goals.Fixtures;
 using Vita.Goals.Infrastructure.Sql;
 
 namespace Vita.Goals.FunctionalTests.Goals;

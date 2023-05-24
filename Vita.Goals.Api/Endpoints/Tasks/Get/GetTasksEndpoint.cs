@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Vita.Goals.Application.Queries.Tasks;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Get;
-internal class GetTasksEndpoint : IEndpoint<IResult, GetTasksRequest, ClaimsPrincipal, CancellationToken>
+internal class GetTasksEndpoint : Endpoint<GetTasksRequest, IEnumerable<TaskDto>>
 {
     private readonly ITaskQueryStore _taskQueryStore;
 
@@ -16,25 +13,25 @@ internal class GetTasksEndpoint : IEndpoint<IResult, GetTasksRequest, ClaimsPrin
         _taskQueryStore = taskQueryStore;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapGet("/api/tasks", ([AsParameters] GetTasksRequest request, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(request, user, cancellationToken))
-           .Produces<IEnumerable<TaskDto>>()
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Tasks")
-           .RequireAuthorization();
+        Get("tasks");
+        Policies("ApiScope");
+        Description(x => x.Produces<IEnumerable<TaskDto>>()
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Tasks"));
     }
 
-    public async Task<IResult> HandleAsync(GetTasksRequest request, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(GetTasksRequest request, CancellationToken cancellationToken)
     {
-        bool hasClaimUserIdClaim = Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid claimUserId);
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(cancellationToken);
+            return;
+        }
 
-        if (request.UserId.HasValue && hasClaimUserIdClaim && request.UserId != claimUserId)
-            return Results.Unauthorized();
+        IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(userId, request.Status, request.StartDate, request.EndDate, cancellationToken);
 
-        IEnumerable<TaskDto> tasks = await _taskQueryStore.GetTasksCreatedByUser(request.UserId ?? claimUserId, request.Status, request.StartDate, request.EndDate, cancellationToken);
-
-        return Results.Ok(tasks);
+        await SendOkAsync(tasks, cancellationToken);
     }
 }

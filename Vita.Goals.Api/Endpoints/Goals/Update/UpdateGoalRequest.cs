@@ -1,3 +1,5 @@
-﻿namespace Vita.Goals.Api.Endpoints.Goals.Update;
+﻿using Vita.Goals.Application.Commands.Shared;
 
-public record UpdateGoalRequest(string Title, string Description, DateTimeOffset? AimDateStart, DateTimeOffset? AimDateEnd);
+namespace Vita.Goals.Api.Endpoints.Goals.Update;
+
+public record UpdateGoalRequest(string Title, string Description, DateTimeOffset? AimDateStart = null, DateTimeOffset? AimDateEnd = null);

@@ -1,14 +1,11 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
+using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Tasks;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Delete;
-internal class DeleteTaskEndpoint : IEndpoint<IResult, Guid, ClaimsPrincipal, CancellationToken>
+internal class DeleteTaskEndpoint : Endpoint<Guid, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -17,24 +14,26 @@ internal class DeleteTaskEndpoint : IEndpoint<IResult, Guid, ClaimsPrincipal, Ca
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapDelete("/api/tasks/{id:guid}", (Guid id, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(id, user, cancellationToken))
-           .Produces(StatusCodes.Status204NoContent)
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Tasks")
-           .RequireAuthorization();
+        Delete("tasks/{id}");
+        Policies("ApiScope");
+        Description(x => x.Produces(StatusCodes.Status204NoContent)
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Tasks"));
     }
 
-    public async Task<IResult> HandleAsync(Guid id, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-            return Results.Unauthorized();
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(cancellationToken);
+            return;
+        }
 
-        DeleteTaskCommand command = new(id);
-        await _sender.Send(command, cancellationToken);
+        DeleteTaskCommand deleteTaskCommand = new(id);
+        await _sender.Send(deleteTaskCommand, cancellationToken);
 
-        return Results.NoContent();
+        await SendNoContentAsync(cancellationToken);
     }
 }

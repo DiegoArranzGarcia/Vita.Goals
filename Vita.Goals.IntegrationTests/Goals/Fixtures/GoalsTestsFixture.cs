@@ -1,12 +1,16 @@
 ﻿using Bogus;
-using Bogus.DataSets;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using Vita.Goals.Api.Endpoints.Goals.Create;
+using Vita.Goals.Api.Endpoints.Goals.Update;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
+using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.WebApplicationFactories;
 using Vita.Goals.Infrastructure.Sql;
 
-namespace Vita.Goals.FunctionalTests.Goals;
+namespace Vita.Goals.FunctionalTests.Goals.Fixtures;
 
 public class GoalsTestsFixture : WebApiApplicationFactory
 {
@@ -25,21 +29,16 @@ public class GoalsTestsFixture : WebApiApplicationFactory
         using IServiceScope scope = Services.CreateScope();
         using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
-        DateTimeInterval range = CreateDateTimeInterval();
+        DateTimeInterval range = new DateTimeIntervalBuilder().Build();
 
-        Goal goal = new Faker<Goal>().CustomInstantiator(faker => new Goal
-            (
-                title: faker.Lorem.Sentence(5),
-                createdBy: userId,
-                description: faker.Lorem.Sentence(15),
-                aimDate: range
-            ))
-            .Generate();
+        Goal goal = new GoalBuilder().WithUserId(userId)
+                                     .WithRange(range)
+                                     .Build();
 
-        context.Goals.Add(goal);
+        EntityEntry<Goal> entry = context.Goals.Add(goal);
         await context.SaveChangesAsync();
 
-        return goal;
+        return entry.Entity;
     }
 
     public async Task<IReadOnlyCollection<Goal>> GoalsInTheDatabase(Guid userId, int count = 15)
@@ -47,8 +46,9 @@ public class GoalsTestsFixture : WebApiApplicationFactory
         using IServiceScope scope = Services.CreateScope();
         using GoalsDbContext context = scope.ServiceProvider.GetRequiredService<GoalsDbContext>();
 
-        List<Goal> goals = new Faker<Goal>().CustomInstantiator(faker => new Goal(title: faker.Lorem.Sentence(5), createdBy: userId, description: faker.Lorem.Sentence(15)))
-                                            .Generate(count);
+        List<Goal> goals = Enumerable.Range(0, count)
+                                     .Select(_ => new GoalBuilder().WithUserId(userId).Build())
+                                     .ToList();
 
         context.Goals.AddRange(goals);
         await context.SaveChangesAsync();
@@ -59,8 +59,8 @@ public class GoalsTestsFixture : WebApiApplicationFactory
     public static CreateGoalRequest BuildCreateGoalRequest() => new Faker<CreateGoalRequest>()
         .CustomInstantiator(faker =>
         {
-            DateTimeInterval range = CreateDateTimeInterval();
-            
+            DateTimeInterval range = new DateTimeIntervalBuilder().Build();
+
             return new CreateGoalRequest
             (
                 Title: faker.Lorem.Sentence(5),
@@ -70,23 +70,19 @@ public class GoalsTestsFixture : WebApiApplicationFactory
             );
         });
 
-    public static DateTimeInterval CreateDateTimeInterval()
-    {
-        Faker faker = new();
+    public static UpdateGoalRequest BuildCreateUpdateRequest() => new Faker<UpdateGoalRequest>()
+        .CustomInstantiator(faker =>
+        {
+            DateTimeInterval range = new DateTimeIntervalBuilder().Build();
 
-        ushort days = faker.Random.UShort();
-        ushort daysAfter = faker.Random.UShort(min: days);
-
-        DateTime start = faker.Date.Soon(days);
-        DateTime end = faker.Date.Soon(daysAfter, start);
-
-        return new DateTimeInterval
-        (
-            start: start,
-            end: end
-        ); 
-    }
-
+            return new UpdateGoalRequest
+            (
+                Title: faker.Lorem.Sentence(5),
+                Description: faker.Lorem.Sentence(15),
+                AimDateStart: range.Start,
+                AimDateEnd: range.End
+            );
+        });
 
     public async Task<IReadOnlyCollection<Domain.Aggregates.Tasks.Task>> GoalTasksForGoalInTheDatabase(Guid goalId, int count = 15)
     {

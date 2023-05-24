@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Update;
 internal class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
@@ -15,7 +17,7 @@ internal class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
 
     public override void Configure()
     {
-        Put("goals/{id:guid}");
+        Patch("goals/{id}");
         Policies("ApiScope");
         Description(x => x.Produces(StatusCodes.Status204NoContent)
                           .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -30,7 +32,7 @@ internal class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
             return;
         }
 
-        UpdateGoalRequest command = new(request.Title, request.Description, request.AimDateStart, request.AimDateEnd);
+        UpdateGoalCommand command = new(Route<Guid>("id"), request.Title, request.Description, request.AimDateStart, request.AimDateEnd, new User(userId));
         await _sender.Send(command, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

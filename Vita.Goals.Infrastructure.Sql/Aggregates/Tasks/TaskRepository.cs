@@ -20,7 +20,8 @@ public class TaskRepository : ITaskRepository
 
     public async Task<Domain.Aggregates.Tasks.Task> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Tasks.FindAsync(new object[] { id }, cancellationToken);
+        return await _context.Tasks.FindAsync(new object[] { id }, cancellationToken) ??
+               throw new KeyNotFoundException();
     }
 
     public Task<Domain.Aggregates.Tasks.Task> Add(Domain.Aggregates.Tasks.Task task)

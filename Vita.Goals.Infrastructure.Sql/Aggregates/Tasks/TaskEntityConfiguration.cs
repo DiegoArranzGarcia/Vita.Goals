@@ -21,7 +21,6 @@ public class TaskEntityConfiguration : EntityTypeConfiguration<Task>
                .HasMaxLength(255);
 
         builder.Property<int>("_taskStatusId")
-               .UsePropertyAccessMode(PropertyAccessMode.Field)
                .HasColumnName("TaskStatusId")
                .IsRequired();
 
@@ -36,6 +35,9 @@ public class TaskEntityConfiguration : EntityTypeConfiguration<Task>
         builder.HasOne(t => t.TaskStatus)
                .WithMany()
                .HasForeignKey("_taskStatusId");
+
+        builder.Navigation(x => x.TaskStatus)
+               .AutoInclude();
 
         builder.OwnsOne(t => t.PlannedDate);
     }

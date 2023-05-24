@@ -1,12 +1,14 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
+using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
+using Vita.Goals.FunctionalTests.Goals.Fixtures;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
@@ -67,10 +69,9 @@ public class GetGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(Guid.NewGuid());
+        var (response, problem) = await httpClient.GETAsync<GetGoalEndpoint, Guid, Microsoft.AspNetCore.Mvc.ProblemDetails>(Guid.NewGuid());
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound, because: response.ReasonPhrase);
-        Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;
 
         problem.Should().NotBeNull();
         problem.Status.Should().Be((int)HttpStatusCode.NotFound);

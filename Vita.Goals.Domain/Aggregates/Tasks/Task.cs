@@ -11,8 +11,8 @@ public class Task : Entity
     private string _title;
 
     private int _taskStatusId;
-    public TaskStatus TaskStatus { get; private set; }
-    public DateTimeInterval PlannedDate { get; set; }
+    public virtual TaskStatus TaskStatus { get; private set; }
+    public DateTimeInterval? PlannedDate { get; set; }
     public DateTimeOffset CreatedOn { get; init; }
     public virtual Goal AssociatedTo { get; set; }
 
@@ -21,7 +21,7 @@ public class Task : Entity
 
     }
 
-    public Task(string title, DateTimeInterval plannedDate = null, Goal associatedTo = null) : this()
+    public Task(string title, Goal associatedTo, DateTimeInterval? plannedDate = null) : this()
     {
         Id = Guid.NewGuid();
         Title = title;

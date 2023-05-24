@@ -1,10 +1,12 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
+using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
+using Vita.Goals.FunctionalTests.Goals.Fixtures;
 using Vita.Goals.Infrastructure.Sql;
 
 namespace Vita.Goals.FunctionalTests.Goals;

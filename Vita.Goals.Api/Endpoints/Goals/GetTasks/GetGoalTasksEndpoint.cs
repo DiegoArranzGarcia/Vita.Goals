@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Vita.Goals.Application.Queries.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.GetTasks;
@@ -22,10 +23,16 @@ internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken ct)
     {
-        IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(id, cancellationToken);
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
-        await SendOkAsync(tasks, cancellationToken);
+        IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(userId, id, ct);
+
+        await SendOkAsync(tasks, ct);
     }
 }

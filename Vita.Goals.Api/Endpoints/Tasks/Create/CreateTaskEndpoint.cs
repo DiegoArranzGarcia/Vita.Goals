@@ -1,15 +1,13 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
+using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
+using Vita.Goals.Application.Commands.Shared;
 using Vita.Goals.Application.Commands.Tasks;
+using Vita.Tasks.Api.Endpoints.Tasks.GetById;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Create;
-internal class CreateTaskEndpoint : IEndpoint<IResult, CreateTaskRequest, ClaimsPrincipal, CancellationToken>
+internal class CreateTaskEndpoint : Endpoint<CreateTaskRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -18,27 +16,31 @@ internal class CreateTaskEndpoint : IEndpoint<IResult, CreateTaskRequest, Claims
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapPost("/api/tasks", ([FromBody] CreateTaskRequest request, ClaimsPrincipal user, CancellationToken cancellationToken) => HandleAsync(request, user, cancellationToken))
-           .Produces(StatusCodes.Status201Created)
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Tasks")
-           .RequireAuthorization();
+        Post("tasks");
+        Policies("ApiScope");
+        Description(x => x.Produces(StatusCodes.Status201Created)
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Tasks"));
     }
 
-    public async Task<IResult> HandleAsync(CreateTaskRequest request, ClaimsPrincipal user, CancellationToken cancellationToken)
+    public async override Task HandleAsync(CreateTaskRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-            return Results.Unauthorized();
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
-        CreateTaskCommand command = new(request.GoalId, request.Title, request.PlannedDateStart, request.PlannedDateEnd);
-        Guid createdTaskId = await _sender.Send(command, cancellationToken);
-
-        //Response.Headers.Add("Access-Control-Allow-Headers", "Location");
-        //Response.Headers.Add("Access-Control-Expose-Headers", "Location");
-
-        return Results.CreatedAtRoute(routeName: $"api/tasks/{createdTaskId}", routeValues: new { id = createdTaskId }, value: null);
+        CreateTaskCommand command = new(request.GoalId, request.Title, new User(userId), request.PlannedDateStart, request.PlannedDateEnd);
+        Guid createdTaskId = await _sender.Send(command, ct);
+   
+        await SendCreatedAtAsync<GetTaskEndpoint>
+        (
+            routeValues: new { id = createdTaskId },
+            responseBody: new EmptyResponse(),
+            cancellation: ct
+        );
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
+using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Api.Endpoints.Goals.GetTasks;
@@ -8,6 +9,7 @@ using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
+using Vita.Goals.FunctionalTests.Goals.Fixtures;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
@@ -68,10 +70,9 @@ public class GetGoalTasksTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(Guid.NewGuid());
+        var (response, problem) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, Microsoft.AspNetCore.Mvc.ProblemDetails>(Guid.NewGuid());
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;
 
         problem.Should().NotBeNull();
         problem.Status.Should().Be((int)HttpStatusCode.NotFound);
@@ -89,7 +90,7 @@ public class GetGoalTasksTests
         IReadOnlyCollection<Domain.Aggregates.Tasks.Task> tasks = await Given.GoalTasksForGoalInTheDatabase(aliceGoal.Id);
 
         HttpClient httpClient = Given.CreateClient()
-                                     .WithIdentity(UserBuilder.BobClaims);
+                                     .WithIdentity(UserBuilder.AliceClaims);
 
         var (response, goalTasksDto) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(aliceGoal.Id);
 

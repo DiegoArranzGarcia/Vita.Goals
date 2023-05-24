@@ -6,15 +6,16 @@ using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
+using Vita.Goals.FunctionalTests.Goals.Fixtures;
 
 namespace Vita.Goals.FunctionalTests.Goals;
 
 [Collection(nameof(GoalsTestCollection))]
-public class GetGoalsTests
+public class GetTasksTests
 {
     private GoalsTestsFixture Given { get; }
 
-    public GetGoalsTests(GoalsTestsFixture goalsTestsFixture)
+    public GetTasksTests(GoalsTestsFixture goalsTestsFixture)
     {
         Given = goalsTestsFixture;
     }

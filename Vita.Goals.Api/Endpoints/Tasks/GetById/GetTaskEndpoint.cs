@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using MinimalApi.Endpoint;
-using Swashbuckle.AspNetCore.Annotations;
 using Vita.Goals.Application.Queries.Tasks;
 
-namespace Vita.Goals.Api.Endpoints.Tasks.GetById;
-internal class GetTaskEndpoint : IEndpoint<IResult, Guid, CancellationToken>
+namespace Vita.Tasks.Api.Endpoints.Tasks.GetById;
+public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
 {
     private readonly ITaskQueryStore _taskQueryStore;
 
@@ -15,24 +12,27 @@ internal class GetTaskEndpoint : IEndpoint<IResult, Guid, CancellationToken>
         _taskQueryStore = taskQueryStore;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapGet("/api/tasks/{id:guid}", (Guid id, CancellationToken cancellationToken) => HandleAsync(id, cancellationToken))
-           .Produces<TaskDto>()
-           .ProducesProblem(StatusCodes.Status404NotFound)
-           .ProducesProblem(StatusCodes.Status401Unauthorized)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Tasks")
-           .RequireAuthorization();
+        Get("tasks/{id}");
+        Tags("Tasks");
+        Policies("ApiScope");
+        Description(x => x.Produces<TaskDto>()
+                          .ProducesProblem(StatusCodes.Status404NotFound)
+                          .ProducesProblem(StatusCodes.Status401Unauthorized)
+                          .WithTags("Tasks"));
     }
 
-    public async Task<IResult> HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
         TaskDto task = await _taskQueryStore.GetTaskById(id, cancellationToken);
 
-        if (task is null)
-            return Results.NotFound();
+        if (task == null)
+        {
+            await SendNotFoundAsync(cancellationToken);
+            return;
+        }
 
-        return Results.Ok(task);
+        await SendOkAsync(task, cancellationToken);
     }
 }

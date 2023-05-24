@@ -35,16 +35,19 @@ public class TaskQueryStore : ITaskQueryStore
     }
 
     public async Task<IEnumerable<TaskDto>> GetTasksCreatedByUser(Guid userId,
-                                                                  string status = null,
+                                                                  string? status = null,
                                                                   DateTimeOffset? startDate = null,
                                                                   DateTimeOffset? endDate = null,
                                                                   CancellationToken cancellationToken = default)
     {
+
+        
+
         const string GetTasksCreatedByUserQuery = @"select t.Id as TaskId, t.Title, t.PlannedDate_Start as PlannedDateStart, t.PlannedDate_End as PlannedDateEnd, ts.Name as Status
                                                           from Tasks t
                                                     inner join TaskStatus ts on t.TaskStatusId = ts.Id
-                                                    inner join Goals g on t.AssociatedToId = g.Id
-                                                         where g.CreatedBy = @UserId";
+                                                    left join Goals g on t.AssociatedToId = g.Id
+                                                    where g.CreatedBy = @UserId";
 
         using var connection = new SqlConnection(_connectionStringProvider.ConnectionString);
         connection.Open();

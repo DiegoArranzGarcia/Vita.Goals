@@ -22,10 +22,8 @@ public class GoalsRepository : IGoalsRepository
 
     public async Task<Goal> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        Goal? goal = await _context.Goals.FindAsync(new object[] { id }, cancellationToken) ??
-                     throw new KeyNotFoundException();
-
-        return goal;
+        return await _context.Goals.FindAsync(new object[] { id }, cancellationToken) ??
+               throw new KeyNotFoundException();
     }
 
     public Task<Goal> Add(Goal goal)
