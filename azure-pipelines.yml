@@ -25,6 +25,7 @@ variables:
   JWTAuthority: '$(oidcEndpoint)'
   AutoMigrateDB: true
   shouldDeploy: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  netVersion: '7.0'
 
 stages:
 - stage: Build
@@ -38,7 +39,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Use .net 7'
       inputs:
-        version: '7.0.x'
+        version: '$(netVersion).x'
         packageType: sdk
 
     - task: NuGetToolInstaller@1
@@ -92,7 +93,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Packing Build'
       inputs:
-        rootFolderOrFile: './Vita.Goals.Host/bin/$(buildConfiguration)/net6.0/'
+        rootFolderOrFile: './Vita.Goals.Host/bin/$(buildConfiguration)/net$(netVersion)/'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/artifacts/$(Build.BuildId).zip'
