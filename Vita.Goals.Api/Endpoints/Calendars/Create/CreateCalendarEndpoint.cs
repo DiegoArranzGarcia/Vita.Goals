@@ -22,12 +22,12 @@ internal class CreateCalendarEndpoint : Endpoint<CreateCalendarRequest>
                           .WithTags("Calendars"));
     }
 
-    public async override Task HandleAsync(CreateCalendarRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(CreateCalendarRequest request, CancellationToken ct)
     {
         CreateCalendarCommand command = new(request.UserId, request.ProviderName);
 
-        await _sender.Send(command, cancellationToken);
+        await _sender.Send(command, ct);
 
-        await SendNoContentAsync(cancellationToken);
+        await SendNoContentAsync(ct);
     }
 }
