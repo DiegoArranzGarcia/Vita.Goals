@@ -1,15 +1,17 @@
-﻿using MediatR;
+﻿using FastEndpoints;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using MinimalApi.Endpoint;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 using Vita.Goals.Application.Commands.Calendars.DeleteCalendar;
 
 namespace Vita.Goals.Api.Endpoints.Calendars.Delete;
 
-internal class DeleteCalendarEndpoint : IEndpoint<IResult, Guid, DeleteCalendarRequest, CancellationToken>
+internal class DeleteCalendarEndpoint : Endpoint<DeleteCalendarRequest, EmptyResult>
 {
     private readonly ISender _sender;
 
@@ -18,20 +20,25 @@ internal class DeleteCalendarEndpoint : IEndpoint<IResult, Guid, DeleteCalendarR
         _sender = sender;
     }
 
-    public void AddRoute(IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapDelete("api/calendars/{loginProviderId}", (Guid loginProviderId, [FromBody] DeleteCalendarRequest request, CancellationToken cancellationToken) => HandleAsync(loginProviderId, request, cancellationToken))
-           .Produces(StatusCodes.Status204NoContent)
-           .WithMetadata(new SwaggerOperationAttribute())
-           .WithTags("Calendars");
+        Delete("calendars/{loginProviderId}");
+        Description(x => x.Produces(StatusCodes.Status204NoContent)
+                          .WithTags("Calendars"));
     }
 
-    public async Task<IResult> HandleAsync(Guid logiunProvider, DeleteCalendarRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(DeleteCalendarRequest request, CancellationToken ct)
     {
-        DeleteCalendarCommand command = new(request.UserId, logiunProvider);
+        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
-        await _sender.Send(command, cancellationToken);
+        DeleteCalendarCommand command = new(userId, Route<Guid>("loginProvider"));
 
-        return Results.NoContent();
+        await _sender.Send(command, ct);
+
+        await SendNoContentAsync(ct);
     }
 }

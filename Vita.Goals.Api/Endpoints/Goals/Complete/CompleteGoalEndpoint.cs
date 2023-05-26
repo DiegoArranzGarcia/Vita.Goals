@@ -26,17 +26,17 @@ internal class CompleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
         DontCatchExceptions();
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(Guid id, CancellationToken ct)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
-            await SendUnauthorizedAsync(cancellationToken);
+            await SendUnauthorizedAsync(ct);
             return;
         }
 
         CompleteGoalCommand completeGoalCommand = new(id, new User(userId));
-        await _sender.Send(completeGoalCommand, cancellationToken);
+        await _sender.Send(completeGoalCommand, ct);
 
-        await SendNoContentAsync(cancellationToken);
+        await SendNoContentAsync(ct);
     }
 }
