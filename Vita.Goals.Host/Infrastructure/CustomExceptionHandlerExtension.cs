@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 
-internal class CustomExceptionHandler { }
+namespace Vita.Goals.Host.Infrastructure;
+
+internal interface ICustomExceptionHandler { }
 
 public static class CustomExceptionHandlerExtension
 {
@@ -30,7 +32,7 @@ public static class CustomExceptionHandlerExtension
                     _ => (int)HttpStatusCode.InternalServerError
                 };
 
-                logger ??= ctx.Resolve<ILogger<CustomExceptionHandler>>();
+                logger ??= ctx.Resolve<ILogger<ICustomExceptionHandler>>();
 
                 var http = exceptionHandler.Endpoint?.DisplayName?.Split(" => ")[0];
                 var type = exception.GetType().Name;
