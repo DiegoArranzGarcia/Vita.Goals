@@ -2,6 +2,7 @@
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
+using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Api.Endpoints.Goals.Delete;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
@@ -27,7 +28,10 @@ public class DeleteGoalTests
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.DELETEAsync<DeleteGoalEndpoint, Guid, EmptyResponse>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<DeleteGoalEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.DELETEAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -40,7 +44,10 @@ public class DeleteGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.DELETEAsync<DeleteGoalEndpoint, Guid, EmptyResponse>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<DeleteGoalEndpoint>()
+                              .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.DELETEAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -54,7 +61,10 @@ public class DeleteGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (response, _) = await httpClient.DELETEAsync<DeleteGoalEndpoint, Guid, EmptyResponse>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<DeleteGoalEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.DELETEAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -65,7 +75,10 @@ public class DeleteGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (response, _) = await httpClient.DELETEAsync<DeleteGoalEndpoint, Guid, EmptyResponse>(Guid.NewGuid());
+        string endpointUri = IEndpoint.TestURLFor<DeleteGoalEndpoint>()
+                              .Replace("{id}", Guid.NewGuid().ToString());
+
+        var (response, _) = await httpClient.DELETEAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;

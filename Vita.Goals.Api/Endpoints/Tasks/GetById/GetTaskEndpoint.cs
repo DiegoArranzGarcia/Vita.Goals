@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Vita.Goals.Application.Queries.Tasks;
 
 namespace Vita.Tasks.Api.Endpoints.Tasks.GetById;
-public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
+public class GetTaskEndpoint : Endpoint<EmptyRequest, TaskDto>
 {
     private readonly ITaskQueryStore _taskQueryStore;
 
@@ -25,7 +25,7 @@ public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
                           .WithTags("Tasks"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken ct)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken ct)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -33,7 +33,7 @@ public class GetTaskEndpoint : Endpoint<Guid, TaskDto>
             return;
         }
 
-        TaskDto task = await _taskQueryStore.GetTaskById(userId, id, ct);
+        TaskDto task = await _taskQueryStore.GetTaskById(userId, Route<Guid>("id"), ct);
 
         if (task == null)
         {

@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
+using System.Net.Http;
+using Vita.Goals.Api.Endpoints.Goals.Ready;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
@@ -26,7 +28,10 @@ public class GetTaskTests
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.GETAsync<GetTaskEndpoint, Guid, TaskDto>(task.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
+                                      .Replace("{id}", task.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, TaskDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -39,7 +44,10 @@ public class GetTaskTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetTaskEndpoint, Guid, TaskDto>(task.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
+                                      .Replace("{id}", task.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, TaskDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -53,7 +61,10 @@ public class GetTaskTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetTaskEndpoint, Guid, TaskDto>(aliceTask.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
+                                      .Replace("{id}", aliceTask.Id.ToString());                
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, TaskDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -66,7 +77,10 @@ public class GetTaskTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, problem) = await httpClient.GETAsync<GetTaskEndpoint, Guid, Microsoft.AspNetCore.Mvc.ProblemDetails>(Guid.NewGuid());
+        string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
+                                      .Replace("{id}", Guid.NewGuid().ToString());
+
+        var (response, problem) = await httpClient.GETAsync<EmptyRequest, Microsoft.AspNetCore.Mvc.ProblemDetails>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound, because: response.ReasonPhrase);
 
@@ -86,7 +100,10 @@ public class GetTaskTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (response, taskDto) = await httpClient.GETAsync<GetTaskEndpoint, Guid, TaskDto>(task.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
+                                    .Replace("{id}", task.Id.ToString());
+
+        var (response, taskDto) = await httpClient.GETAsync<EmptyRequest, TaskDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -97,5 +114,4 @@ public class GetTaskTests
         taskDto.PlannedDateEnd.Should().Be(task.PlannedDate!.End);
         taskDto.Status.Should().Be(Domain.Aggregates.Tasks.TaskStatus.Ready.Name);
     }
-
 }

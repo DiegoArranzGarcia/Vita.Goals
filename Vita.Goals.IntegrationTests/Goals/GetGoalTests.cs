@@ -29,7 +29,10 @@ public class GetGoalTests
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, GoalDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -42,7 +45,10 @@ public class GetGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, GoalDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -56,7 +62,10 @@ public class GetGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(aliceGoal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, GoalDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -69,7 +78,10 @@ public class GetGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, problem) = await httpClient.GETAsync<GetGoalEndpoint, Guid, Microsoft.AspNetCore.Mvc.ProblemDetails>(Guid.NewGuid());
+        string endpointUri = IEndpoint.TestURLFor<GetGoalEndpoint>()
+                              .Replace("{id}", Guid.NewGuid().ToString());
+
+        var (response, problem) = await httpClient.GETAsync<EmptyRequest, Microsoft.AspNetCore.Mvc.ProblemDetails>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound, because: response.ReasonPhrase);
 
@@ -89,7 +101,11 @@ public class GetGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (response, goalDto) = await httpClient.GETAsync<GetGoalEndpoint, Guid, GoalDto>(goal.Id);
+
+        string endpointUri = IEndpoint.TestURLFor<GetGoalEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, goalDto) = await httpClient.GETAsync<EmptyRequest, GoalDto>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 

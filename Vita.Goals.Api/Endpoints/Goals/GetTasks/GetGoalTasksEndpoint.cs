@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Vita.Goals.Application.Queries.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.GetTasks;
-internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
+internal class GetGoalTasksEndpoint : Endpoint<EmptyRequest, IEnumerable<GoalTaskDto>>
 {
     private readonly IGoalQueryStore _goalQueryStore;
 
@@ -23,7 +23,7 @@ internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken ct)
+    public async override Task HandleAsync(EmptyRequest req, CancellationToken ct)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -31,7 +31,7 @@ internal class GetGoalTasksEndpoint : Endpoint<Guid, IEnumerable<GoalTaskDto>>
             return;
         }
 
-        IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(userId, id, ct);
+        IEnumerable<GoalTaskDto> tasks = await _goalQueryStore.GetGoalTasks(userId, Route<Guid>("id"), ct);
 
         await SendOkAsync(tasks, ct);
     }

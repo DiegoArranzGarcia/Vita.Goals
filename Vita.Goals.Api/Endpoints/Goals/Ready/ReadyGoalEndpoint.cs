@@ -7,7 +7,7 @@ using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Ready;
 
-internal class ReadyGoalEndpoint : Endpoint<Guid, EmptyResponse>
+internal class ReadyGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -25,7 +25,7 @@ internal class ReadyGoalEndpoint : Endpoint<Guid, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -33,7 +33,7 @@ internal class ReadyGoalEndpoint : Endpoint<Guid, EmptyResponse>
             return;
         }
 
-        ReadyGoalCommand command = new(id, new User(userId));
+        ReadyGoalCommand command = new(Route<Guid>("id"), new User(userId));
         await _sender.Send(command, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

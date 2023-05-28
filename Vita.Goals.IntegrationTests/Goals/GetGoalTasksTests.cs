@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
+using Vita.Goals.Api.Endpoints.Goals.Delete;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Api.Endpoints.Goals.GetTasks;
 using Vita.Goals.Application.Queries.Goals;
@@ -30,7 +31,10 @@ public class GetGoalTasksTests
 
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalTasksEndpoint>()
+                              .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, IEnumerable<GoalTaskDto>>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -43,7 +47,10 @@ public class GetGoalTasksTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(goal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalTasksEndpoint>()
+                                      .Replace("{id}", goal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, IEnumerable<GoalTaskDto>>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -57,7 +64,10 @@ public class GetGoalTasksTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(aliceGoal.Id);
+        string endpointUri = IEndpoint.TestURLFor<GetGoalTasksEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
+        var (response, _) = await httpClient.GETAsync<EmptyRequest, IEnumerable<GoalTaskDto>>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -70,7 +80,10 @@ public class GetGoalTasksTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, problem) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, Microsoft.AspNetCore.Mvc.ProblemDetails>(Guid.NewGuid());
+        string endpointUri = IEndpoint.TestURLFor<GetGoalTasksEndpoint>()
+                              .Replace("{id}", Guid.NewGuid().ToString());
+
+        var (response, problem) = await httpClient.GETAsync<EmptyRequest, Microsoft.AspNetCore.Mvc.ProblemDetails>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
@@ -92,7 +105,11 @@ public class GetGoalTasksTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
-        var (response, goalTasksDto) = await httpClient.GETAsync<GetGoalTasksEndpoint, Guid, IEnumerable<GoalTaskDto>>(aliceGoal.Id);
+
+        string endpointUri = IEndpoint.TestURLFor<GetGoalTasksEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
+        var (response, goalTasksDto) = await httpClient.GETAsync<EmptyRequest, IEnumerable<GoalTaskDto>>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 

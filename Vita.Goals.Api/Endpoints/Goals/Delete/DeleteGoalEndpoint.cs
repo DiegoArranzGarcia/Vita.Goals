@@ -5,7 +5,7 @@ using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Delete;
-internal class DeleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
+internal class DeleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -23,7 +23,7 @@ internal class DeleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -31,7 +31,7 @@ internal class DeleteGoalEndpoint : Endpoint<Guid, EmptyResponse>
             return;
         }
 
-        DeleteGoalCommand deleteGoalCommand = new(id);
+        DeleteGoalCommand deleteGoalCommand = new(Route<Guid>("id"));
         await _sender.Send(deleteGoalCommand, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

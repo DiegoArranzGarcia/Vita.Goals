@@ -7,7 +7,7 @@ using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.InProgress;
 
-internal class InProgressGoalEndpoint : Endpoint<Guid, EmptyResponse>
+internal class InProgressGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -25,7 +25,7 @@ internal class InProgressGoalEndpoint : Endpoint<Guid, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
@@ -33,7 +33,7 @@ internal class InProgressGoalEndpoint : Endpoint<Guid, EmptyResponse>
             return;
         }
 
-        InProgressGoalCommand command = new(id, new User(userId));
+        InProgressGoalCommand command = new(Route<Guid>("id"), new User(userId));
         await _sender.Send(command, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

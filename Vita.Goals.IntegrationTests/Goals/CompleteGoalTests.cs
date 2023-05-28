@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Goals.Complete;
+using Vita.Goals.Api.Endpoints.Goals.Update;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
@@ -26,9 +27,13 @@ public class CompleteGoalTests
     {
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
+        string endpointUri = IEndpoint.TestURLFor<CompleteGoalEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
+
         HttpClient httpClient = Given.CreateClient();
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.PUTAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -38,10 +43,13 @@ public class CompleteGoalTests
     {
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
+        string endpointUri = IEndpoint.TestURLFor<CompleteGoalEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.UnauthorizedUserClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.PUTAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -52,10 +60,13 @@ public class CompleteGoalTests
     {
         Goal aliceGoal = await Given.AGoalInTheDatabase(UserBuilder.AliceUserId);
 
+        string endpointUri = IEndpoint.TestURLFor<CompleteGoalEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
+
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.PUTAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -66,7 +77,10 @@ public class CompleteGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.BobClaims);
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(Guid.NewGuid());
+        string endpointUri = IEndpoint.TestURLFor<CompleteGoalEndpoint>()
+                                      .Replace("{id}", Guid.NewGuid().ToString());
+
+        var (response, _) = await httpClient.PUTAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         Microsoft.AspNetCore.Mvc.ProblemDetails problem = (await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>())!;
@@ -86,8 +100,10 @@ public class CompleteGoalTests
         HttpClient httpClient = Given.CreateClient()
                                      .WithIdentity(UserBuilder.AliceClaims);
 
+        string endpointUri = IEndpoint.TestURLFor<CompleteGoalEndpoint>()
+                                      .Replace("{id}", aliceGoal.Id.ToString());
 
-        var (response, _) = await httpClient.PUTAsync<CompleteGoalEndpoint, Guid, EmptyResponse>(aliceGoal.Id);
+        var (response, _) = await httpClient.PUTAsync<EmptyRequest, EmptyResponse>(endpointUri, default);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
