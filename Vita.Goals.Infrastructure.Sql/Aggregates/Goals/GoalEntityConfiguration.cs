@@ -44,6 +44,9 @@ public class GoalEntityConfiguration : EntityTypeConfiguration<Goal>
                .WithMany()
                .HasForeignKey("_goalStatusId");
 
+        builder.Navigation(x => x.GoalStatus)
+               .AutoInclude();
+
         builder.OwnsOne(g => g.AimDate);
     }
 }

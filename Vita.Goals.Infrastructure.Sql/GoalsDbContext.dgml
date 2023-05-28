@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+<Node Id="IModel" Label="GoalsDbContext" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" PropertyAccessMode="PropertyAccessMode.Default" ProductVersion="7.0.3" Annotations="BaseTypeDiscoveryConvention:DerivedTypes: System.Collections.Generic.Dictionary`2[System.Type,System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.IConventionEntityType]]
+Relational:MaxIdentifierLength: 128
+RelationshipDiscoveryConvention:InverseNavigationCandidates: System.Collections.Generic.Dictionary`2[System.Type,System.Collections.Generic.SortedSet`1[System.Type]]
+SqlServer:ValueGenerationStrategy: IdentityColumn" Category="Model" Group="Expanded" />
+<Node Id = "Goal" Label="Goal" Name="Goal" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:Schema:
+Relational:TableName: Goals
+RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "Goal.AimDate#DateTimeInterval" Label="Goal.AimDate#DateTimeInterval" Name="Goal.AimDate#DateTimeInterval" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "Goal.Id" Label="Id (Guid)" Name="Id" Category="Property Primary" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
+<Node Id = "Goal.AimDate" Label="AimDate (1)" Name="AimDate" Category="Navigation Property" Type="DateTimeInterval"  Field="" Dependent="Goal.AimDate#DateTimeInterval" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Goal.GoalStatus" Label="GoalStatus (1)" Name="GoalStatus" Category="Navigation Property" Type="GoalStatus"  Field="" Dependent="" Principal="GoalStatus" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Goal.Tasks" Label="Tasks (*)" Name="Tasks" Category="Navigation Collection" Type="ICollection&lt;Task&gt;"  Field="" Dependent="Task" Principal="" Inverse="AssociatedTo" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Goal.CreatedBy" Label="CreatedBy (Guid)" Name="CreatedBy" Category="Property Required" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnName: CreatedBy" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal.CreatedOn" Label="CreatedOn (DateTimeOffset)" Name="CreatedOn" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnType: datetimeoffset(0)" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal.Description" Label="Description (string)" Name="Description" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal.Title" Label="Title (string)" Name="Title" Category="Property Required" Type="string" MaxLength="(255)" Field="_title" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
+Relational:ColumnName: Title" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal._goalStatusId" Label="_goalStatusId (int)" Name="_goalStatusId" Category="Property Foreign" Type="int" MaxLength="None" Field="_goalStatusId" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnName: GoalStatusId" IsPrimaryKey="False" IsForeignKey="True" IsRequired="True" IsIndexed="True" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "GoalStatus" Label="GoalStatus" Name="GoalStatus" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:Schema:
+Relational:TableName: GoalStatus
+RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "Goal.AimDate#DateTimeInterval.GoalId" Label="GoalId (Guid)" Name="GoalId" Category="Property Primary" Type="Guid" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="True" IsRequired="True" IsIndexed="False" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal.AimDate#DateTimeInterval.End" Label="End (DateTimeOffset)" Name="End" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Goal.AimDate#DateTimeInterval.Start" Label="Start (DateTimeOffset)" Name="Start" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task" Label="Task" Name="Task" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:Schema:
+Relational:TableName: Tasks
+RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "GoalStatus.Id" Label="Id (int)" Name="Id" Category="Property Primary" Type="int" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "GoalStatus.Name" Label="Name (string)" Name="Name" Category="Property Required" Type="string" MaxLength="(200)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 200" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task.PlannedDate#DateTimeInterval" Label="Task.PlannedDate#DateTimeInterval" Name="Task.PlannedDate#DateTimeInterval" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "Task.Id" Label="Id (Guid)" Name="Id" Category="Property Primary" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
+<Node Id = "Task.AssociatedTo" Label="AssociatedTo (1)" Name="AssociatedTo" Category="Navigation Property" Type="Goal"  Field="" Dependent="" Principal="Goal" Inverse="Tasks" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Task.PlannedDate" Label="PlannedDate (1)" Name="PlannedDate" Category="Navigation Property" Type="DateTimeInterval"  Field="" Dependent="Task.PlannedDate#DateTimeInterval" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Task.TaskStatus" Label="TaskStatus (1)" Name="TaskStatus" Category="Navigation Property" Type="TaskStatus"  Field="" Dependent="" Principal="TaskStatus" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Task.AssociatedToId" Label="AssociatedToId (Guid)" Name="AssociatedToId" Category="Property Foreign" Type="Guid" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="True" IsRequired="True" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task.CreatedOn" Label="CreatedOn (DateTimeOffset)" Name="CreatedOn" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnType: datetimeoffset(0)" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task.Title" Label="Title (string)" Name="Title" Category="Property Required" Type="string" MaxLength="(255)" Field="_title" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
+Relational:ColumnName: Title" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task._taskStatusId" Label="_taskStatusId (int)" Name="_taskStatusId" Category="Property Foreign" Type="int" MaxLength="None" Field="_taskStatusId" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnName: TaskStatusId" IsPrimaryKey="False" IsForeignKey="True" IsRequired="True" IsIndexed="True" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "TaskStatus" Label="TaskStatus" Name="TaskStatus" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:Schema:
+Relational:TableName: TaskStatus
+RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "Task.PlannedDate#DateTimeInterval.TaskId" Label="TaskId (Guid)" Name="TaskId" Category="Property Primary" Type="Guid" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="True" IsRequired="True" IsIndexed="False" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task.PlannedDate#DateTimeInterval.End" Label="End (DateTimeOffset)" Name="End" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "Task.PlannedDate#DateTimeInterval.Start" Label="Start (DateTimeOffset)" Name="Start" Category="Property Required" Type="DateTimeOffset" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "TaskStatus" Label="TaskStatus" Name="TaskStatus" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="" Category="EntityType" Group="Expanded" />
+<Node Id = "TaskStatus.Id" Label="Id (int)" Name="Id" Category="Property Primary" Type="int" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "TaskStatus.Name" Label="Name (string)" Name="Name" Category="Property Required" Type="string" MaxLength="(200)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 200" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+  </Nodes>
+  <Links>
+<Link Source = "IModel" Target="Goal" Category="Contains" />
+<Link Source = "IModel" Target="Goal.AimDate#DateTimeInterval" Category="Contains" />
+<Link Source = "Goal" Target="Goal.AimDate" Category="Contains" />
+<Link Source = "Goal" Target="Goal.GoalStatus" Category="Contains" />
+<Link Source = "Goal" Target="Goal.Tasks" Category="Contains" />
+<Link Source = "Goal" Target="Goal.Id" Category="Contains" />
+<Link Source="Goal" Target="GoalStatus" From="Goal._goalStatusId" To="GoalStatus.Id" Name="Goal -> GoalStatus" Annotations="" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source = "Goal" Target="Goal.CreatedBy" Category="Contains" />
+<Link Source = "Goal" Target="Goal.CreatedOn" Category="Contains" />
+<Link Source = "Goal" Target="Goal.Description" Category="Contains" />
+<Link Source = "Goal" Target="Goal.Title" Category="Contains" />
+<Link Source = "Goal" Target="Goal._goalStatusId" Category="Contains" />
+<Link Source = "IModel" Target="GoalStatus" Category="Contains" />
+<Link Source = "Goal.AimDate#DateTimeInterval" Target="Goal.AimDate#DateTimeInterval.GoalId" Category="Contains" />
+<Link Source="Goal.AimDate#DateTimeInterval" Target="Goal" From="Goal.AimDate#DateTimeInterval.GoalId" To="Goal.Id" Name="Goal.AimDate#DateTimeInterval -> Goal" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
+<Link Source = "Goal.AimDate#DateTimeInterval" Target="Goal.AimDate#DateTimeInterval.End" Category="Contains" />
+<Link Source = "Goal.AimDate#DateTimeInterval" Target="Goal.AimDate#DateTimeInterval.Start" Category="Contains" />
+<Link Source = "IModel" Target="Task" Category="Contains" />
+<Link Source = "GoalStatus" Target="GoalStatus.Id" Category="Contains" />
+<Link Source = "GoalStatus" Target="GoalStatus.Name" Category="Contains" />
+<Link Source = "IModel" Target="Task.PlannedDate#DateTimeInterval" Category="Contains" />
+<Link Source = "Task" Target="Task.AssociatedTo" Category="Contains" />
+<Link Source = "Task" Target="Task.PlannedDate" Category="Contains" />
+<Link Source = "Task" Target="Task.TaskStatus" Category="Contains" />
+<Link Source = "Task" Target="Task.Id" Category="Contains" />
+<Link Source="Task" Target="Goal" From="Task.AssociatedToId" To="Goal.Id" Name="Task -> Goal" Annotations="" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source="Task" Target="TaskStatus" From="Task._taskStatusId" To="TaskStatus.Id" Name="Task -> TaskStatus" Annotations="" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source = "Task" Target="Task.AssociatedToId" Category="Contains" />
+<Link Source = "Task" Target="Task.CreatedOn" Category="Contains" />
+<Link Source = "Task" Target="Task.Title" Category="Contains" />
+<Link Source = "Task" Target="Task._taskStatusId" Category="Contains" />
+<Link Source = "IModel" Target="TaskStatus" Category="Contains" />
+<Link Source = "Task.PlannedDate#DateTimeInterval" Target="Task.PlannedDate#DateTimeInterval.TaskId" Category="Contains" />
+<Link Source="Task.PlannedDate#DateTimeInterval" Target="Task" From="Task.PlannedDate#DateTimeInterval.TaskId" To="Task.Id" Name="Task.PlannedDate#DateTimeInterval -> Task" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
+<Link Source = "Task.PlannedDate#DateTimeInterval" Target="Task.PlannedDate#DateTimeInterval.End" Category="Contains" />
+<Link Source = "Task.PlannedDate#DateTimeInterval" Target="Task.PlannedDate#DateTimeInterval.Start" Category="Contains" />
+<Link Source = "IModel" Target="TaskStatus" Category="Contains" />
+<Link Source = "TaskStatus" Target="TaskStatus.Id" Category="Contains" />
+<Link Source = "TaskStatus" Target="TaskStatus.Name" Category="Contains" />
+  </Links>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="EntityType" ValueLabel="True">
+      <Condition Expression="HasCategory('EntityType')" />
+      <Setter Property="Background" Value="#FFC0C0C0" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Primary" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Primary')" />
+      <Setter Property="Background" Value="#FF008000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Optional" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Optional')" />
+      <Setter Property="Background" Value="#FF808040" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Foreign" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Foreign')" />
+      <Setter Property="Background" Value="#FF8080FF" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Required" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Required')" />
+      <Setter Property="Background" Value="#FFC0A000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Navigation Property" ValueLabel="True">
+      <Condition Expression="HasCategory('Navigation Property')" />
+      <Setter Property="Background" Value="#FF990000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Navigation Collection" ValueLabel="True">
+      <Condition Expression="HasCategory('Navigation Collection')" />
+      <Setter Property="Background" Value="#FFFF3232" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Model" ValueLabel="True">
+      <Condition Expression="HasCategory('Model')" />
+      <Setter Property="Background" Value="#FFFFFFFF" />
+    </Style>
+  </Styles>
+  <Properties>
+    <Property Id="Name" Group="Model Properties" DataType="System.String" />
+    <Property Id="Field"  Description="Backing field" Group="Model Properties" DataType="System.String" />
+    <Property Id="Type"  Description="CLR data type" Group="Model Properties" DataType="System.String" />
+    <Property Id="To" Description="Source property" Group="Model Properties" DataType="System.String" />
+    <Property Id="From" Description="Target property" Group="Model Properties" DataType="System.String" />
+    <Property Id="Dependent" Description="Dependent entity" Group="Model Properties" DataType="System.String" />
+    <Property Id="Inverse" Description="Inverse entity" Group="Model Properties" DataType="System.String" />
+    <Property Id="Principal" Description="Principal entity" Group="Model Properties" DataType="System.String" />    
+    <Property Id="Annotations" Description="Annotations" Group="Model Properties" DataType="System.String" />
+    <Property Id="BaseClass"  Description="Base class" Group="Model Properties" DataType="System.String" />
+    <Property Id="ChangeTrackingStrategy" Description="Change tracking strategy" Group="Model Properties" DataType="System.String" />
+    <Property Id="IsUnique" Group="Model Properties" DataType="System.Boolean" />
+    <Property Id="IsAbstract" Group="Model Properties" DataType="System.Boolean" />
+    <Property Id="ProductVersion" Label="Product Version" Description="EF Core product version" Group="Model Properties" DataType="System.String" />
+    <Property Id="IsIndexed" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsRequired" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsPrimaryKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsForeignKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsShadow" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsAlternateKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsConcurrencyToken" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsIndexed" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsUnicode" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="ValueGenerated" Group="Property Flags" DataType="System.String" />
+    <Property Id="BeforeSaveBehavior" Group="Property Flags" DataType="System.String" />
+    <Property Id="AfterSaveBehavior" Group="Property Flags" DataType="System.String" />
+    <Property Id="PropertyAccessMode" Group="Property Flags" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

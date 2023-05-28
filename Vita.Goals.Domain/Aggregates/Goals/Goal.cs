@@ -11,9 +11,9 @@ public class Goal : Entity
 {
     private string _title;
     private int _goalStatusId;
-    public GoalStatus GoalStatus { get; private set; }
-    public string Description { get; set; }
-    public DateTimeInterval AimDate { get; set; }
+    public virtual GoalStatus GoalStatus { get; private set; }
+    public string? Description { get; set; }
+    public DateTimeInterval? AimDate { get; set; }
     public ICollection<Task> Tasks { get; set; }
     public Guid CreatedBy { get; init; }
     public DateTimeOffset CreatedOn { get; init; }
@@ -23,7 +23,7 @@ public class Goal : Entity
 
     }
 
-    public Goal(string title, Guid createdBy, string description = null, DateTimeInterval aimDate = null) : this()
+    public Goal(string title, Guid createdBy, string? description = null, DateTimeInterval? aimDate = null) : this()
     {
         Id = Guid.NewGuid();
         Title = title;

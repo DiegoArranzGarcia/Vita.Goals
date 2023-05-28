@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FastEndpoints;
+using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vita.Goals.Api;
-using Vita.Goals.Application.Commands;
+using Vita.Goals.Host.Extensions;
 using Vita.Goals.Host.Infrastructure;
 using Vita.Goals.Infrastructure.Sql;
 
@@ -16,18 +19,30 @@ services.AddCustomAuthentication(configuration);
 services.AddCustomAuthorization();
 services.AddCustomCors(configuration);
 
-services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-
 services.ConfigureApiServices();
-services.ConfigureApplicationCommandServices();
 services.ConfigurePersistenceServices(configuration);
+
+services.AddApplicationInsightsTelemetry(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+
+services.RegisterVitaHttpClients(configuration);
 
 var app = builder.Build();
 
+app.UseFastEndpoints(config =>
+{
+    config.Endpoints.RoutePrefix = "api";
+    config.Endpoints.Configurator = endpointBuilder =>
+    {
+        endpointBuilder.DontCatchExceptions();
+    };
+});
+
+app.UseCustomExceptionHandler();
+
 if (app.Environment.IsDevelopment())
-{   
+{
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
+    app.UseSwaggerGen();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
@@ -44,6 +59,11 @@ app.UseCors("spa-cors");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.MigrateDbContext<GoalsDbContext>();
 
 app.Run();
+
+public partial class Program
+{
+
+}

@@ -1,4 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Vita.Core.Domain.Repositories;
@@ -18,7 +22,8 @@ public class TaskRepository : ITaskRepository
 
     public async Task<Domain.Aggregates.Tasks.Task> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Tasks.FindAsync(new object[] { id }, cancellationToken);
+        return await _context.Tasks.Include(x => x.AssociatedTo).FirstOrDefaultAsync(x => x.Id == id, cancellationToken) ??
+               throw new KeyNotFoundException();
     }
 
     public Task<Domain.Aggregates.Tasks.Task> Add(Domain.Aggregates.Tasks.Task task)
@@ -37,5 +42,10 @@ public class TaskRepository : ITaskRepository
     {
         var task = await FindById(id);
         _context.Remove(task);
+    }
+
+    public IEnumerable<Domain.Aggregates.Tasks.Task> Get(Func<Domain.Aggregates.Tasks.Task, bool> taskSpecificationFilter)
+    {
+        return _context.Tasks.Where(taskSpecificationFilter);
     }
 }

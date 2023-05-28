@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vita.Core.Domain.Repositories;
@@ -19,7 +22,8 @@ public class GoalsRepository : IGoalsRepository
 
     public async Task<Goal> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Goals.FindAsync(new object[] { id }, cancellationToken);
+        return await _context.Goals.FindAsync(new object[] { id }, cancellationToken) ??
+               throw new KeyNotFoundException();
     }
 
     public Task<Goal> Add(Goal goal)
