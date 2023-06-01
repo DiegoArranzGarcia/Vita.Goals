@@ -24,7 +24,7 @@ public static class HttpClientExtensions
         });
 
 
-        services.AddHttpClient<VitaIdentityApiClient>(client => { client.BaseAddress = new Uri("https://localhost:44360"); })
+        services.AddHttpClient<IVitaIdentityApiClient, VitaIdentityApiClient>(client => { client.BaseAddress = new Uri(configuration["JWTAuthority"]); })
                 .AddClientAccessTokenHandler(TokenClientName);
 
         return services;

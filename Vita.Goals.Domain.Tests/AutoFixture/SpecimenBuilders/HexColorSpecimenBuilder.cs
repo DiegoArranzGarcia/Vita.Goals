@@ -1,18 +1,7 @@
-﻿using AutoFixture;
-using AutoFixture.Kernel;
-using System;
-using System.Linq;
+﻿using AutoFixture.Kernel;
 using Vita.Goals.Domain.ValueObjects;
 
-namespace Vita.Goals.Domain.Tests.AutoFixture;
-
-public class HexColorCustomization : ICustomization
-{
-    public void Customize(IFixture fixture)
-    {
-        fixture.Customizations.Add(new HexColorSpecimenBuilder());
-    }
-}
+namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders;
 
 public class HexColorSpecimenBuilder : ISpecimenBuilder
 {

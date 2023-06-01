@@ -1,18 +1,7 @@
-﻿using AutoFixture;
-using AutoFixture.Kernel;
-using System;
-using System.Linq;
-using Vita.Goals.Domain.ValueObjects;
+﻿using AutoFixture.Kernel;
+using Vita.Common;
 
-namespace Vita.Goals.Domain.Tests.AutoFixture;
-
-public class DateTimeIntervalCustomization : ICustomization
-{
-    public void Customize(IFixture fixture)
-    {
-        fixture.Customizations.Add(new DateTimeIntervalSpecimenBuilder());
-    }
-}
+namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders;
 
 public class DateTimeIntervalSpecimenBuilder : ISpecimenBuilder
 {

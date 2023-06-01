@@ -1,8 +1,6 @@
-﻿using System;
-using Vita.Goals.Domain.ValueObjects;
-using Xunit;
+﻿using Vita.Goals.Domain.ValueObjects;
 
-namespace Vita.Goals.Domain.Tests.ValueObjects.HexColors;
+namespace Vita.Goals.UnitTests.Domain.ValueObjects.HexColors;
 
 public class HexColorTests
 {
@@ -14,8 +12,7 @@ public class HexColorTests
     {
         var hexColor = new HexColor(hexColorStr);
 
-        Assert.NotNull(hexColor);
-        Assert.Equal(expected: hexColorStr, hexColor.Color);
+        hexColor.Color.Should().Be(expected: hexColorStr);
     }
 
     [Theory]
@@ -25,6 +22,8 @@ public class HexColorTests
     [InlineData("#FFFFFZ")]
     public void BadValidHexColors_WhenCreatingHexColor_ShouldThrowArgumentException(string badHexColors)
     {
-        Assert.ThrowsAny<ArgumentException>(() => new HexColor(badHexColors));
+        Action act = () => _ = new HexColor(badHexColors);
+
+        act.Should().Throw<ArgumentException>();
     }
 }

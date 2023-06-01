@@ -22,7 +22,7 @@ public class GoalsDbContext : VitaDbContext
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    {       
         modelBuilder.ApplyConfiguration(new GoalEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GoalStatusSafeEnumConfiguration());
         modelBuilder.ApplyConfiguration(new TaskEntityConfiguration());

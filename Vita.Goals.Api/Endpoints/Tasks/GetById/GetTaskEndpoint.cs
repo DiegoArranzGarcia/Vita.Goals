@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Goals.Application.Queries.Tasks;
 
-namespace Vita.Tasks.Api.Endpoints.Tasks.GetById;
+namespace Vita.Goals.Api.Endpoints.Tasks.GetById;
 public class GetTaskEndpoint : Endpoint<EmptyRequest, TaskDto>
 {
     private readonly ITaskQueryStore _taskQueryStore;
@@ -12,7 +12,7 @@ public class GetTaskEndpoint : Endpoint<EmptyRequest, TaskDto>
     {
         _taskQueryStore = taskQueryStore;
     }
-    
+
     /// <inheritdoc/>
     public override void Configure()
     {

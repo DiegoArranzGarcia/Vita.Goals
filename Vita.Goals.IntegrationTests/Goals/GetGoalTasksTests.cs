@@ -1,10 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
-using System.Net.Http.Json;
-using Vita.Goals.Api.Endpoints.Goals.Complete;
-using Vita.Goals.Api.Endpoints.Goals.Delete;
-using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Api.Endpoints.Goals.GetTasks;
 using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;

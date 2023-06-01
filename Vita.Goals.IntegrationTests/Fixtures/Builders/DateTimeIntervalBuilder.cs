@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Vita.Common;
 using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.FunctionalTests.Fixtures.Builders;

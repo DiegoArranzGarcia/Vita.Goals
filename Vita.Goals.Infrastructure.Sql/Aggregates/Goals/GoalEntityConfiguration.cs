@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 using Vita.Core.Infrastructure.Sql;
 using Vita.Goals.Domain.Aggregates.Goals;
 
@@ -24,9 +25,10 @@ public class GoalEntityConfiguration : EntityTypeConfiguration<Goal>
                .HasColumnName(nameof(Goal.CreatedBy))
                .IsRequired();
 
-        builder.Property<int>("_goalStatusId")
+        builder.Property(x => x.GoalStatus)
                .HasColumnName("GoalStatusId")
-               .IsRequired();
+               .HasConversion(p => p.Id,
+                              p => Core.Domain.Enumeration.FromValue<GoalStatus>(p));
 
         builder.Property(g => g.CreatedOn)
                .HasColumnType("datetimeoffset(0)")
@@ -39,13 +41,6 @@ public class GoalEntityConfiguration : EntityTypeConfiguration<Goal>
         builder.HasMany(g => g.Tasks)
                .WithOne(t => t.AssociatedTo)
                .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(g => g.GoalStatus)
-               .WithMany()
-               .HasForeignKey("_goalStatusId");
-
-        builder.Navigation(x => x.GoalStatus)
-               .AutoInclude();
 
         builder.OwnsOne(g => g.AimDate);
     }

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Threading;
+using Vita.Common;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 using Task = System.Threading.Tasks.Task;
@@ -25,9 +26,7 @@ public class UpdateGoalCommandHandler : IRequestHandler<UpdateGoalCommand>
 
         goal.Title = request.Title;
         goal.Description = request.Description;
-        goal.AimDate = request.AimDateStart.HasValue && request.AimDateEnd.HasValue ?
-                       new DateTimeInterval(request.AimDateStart.Value, request.AimDateEnd.Value) :
-                       null;
+        goal.AimDate = request.AimDate;
 
         await _goalsRepository.Update(goal);
         await _goalsRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

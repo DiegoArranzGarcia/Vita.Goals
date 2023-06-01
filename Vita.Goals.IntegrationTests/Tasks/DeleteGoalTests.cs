@@ -3,7 +3,6 @@ using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
 using Vita.Goals.Api.Endpoints.Tasks.Delete;
-using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
 using Vita.Goals.FunctionalTests.Tasks.Fixtures;

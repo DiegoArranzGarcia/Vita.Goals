@@ -3,7 +3,6 @@ using FluentAssertions;
 using System.Net;
 using Vita.Goals.Api.Endpoints.Tasks.Get;
 using Vita.Goals.Application.Queries.Tasks;
-using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
 using Vita.Goals.FunctionalTests.Tasks.Fixtures;

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vita.Goals.Host", "Vita.Goa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vita.Goals.Infrastructure.Sql", "Vita.Goals.Infrastructure.Sql\Vita.Goals.Infrastructure.Sql.csproj", "{FF9AF15F-A321-44EE-9524-1F2042A1AAEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vita.Goals.Domain.Tests", "Vita.Goals.Domain.Tests\Vita.Goals.Domain.Tests.csproj", "{A42C7880-7034-400F-BB08-EDC0BE6EB657}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vita.Goals.UnitTests", "Vita.Goals.Domain.Tests\Vita.Goals.UnitTests.csproj", "{A42C7880-7034-400F-BB08-EDC0BE6EB657}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vita.Goals.Application.Queries", "Vita.Goals.Application.Queries\Vita.Goals.Application.Queries.csproj", "{C852398A-9432-4BD0-A621-D47ACD1C9820}"
 EndProject

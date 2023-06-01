@@ -2,11 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Vita.Common;
 using Vita.Goals.Application.Commands.Goals;
 using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Update;
-internal class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
+public class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 
@@ -32,7 +33,11 @@ internal class UpdateGoalEndpoint : Endpoint<UpdateGoalRequest, EmptyResponse>
             return;
         }
 
-        UpdateGoalCommand command = new(Route<Guid>("id"), request.Title, request.Description, request.AimDateStart, request.AimDateEnd, new User(userId));
+        DateTimeInterval? aimDate = request.AimDateStart.HasValue && request.AimDateEnd.HasValue ?
+                                   new DateTimeInterval(request.AimDateStart.Value, request.AimDateEnd.Value) :
+                                   null;
+
+        UpdateGoalCommand command = new(Route<Guid>("id"), request.Title, request.Description, aimDate, new User(userId));
         await _sender.Send(command, cancellationToken);
 
         await SendNoContentAsync(cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Microsoft.Extensions.DependencyInjection;
+using Vita.Common;
 using Vita.Goals.Api.Endpoints.Tasks.Create;
 using Vita.Goals.Api.Endpoints.Tasks.Update;
 using Vita.Goals.Domain.Aggregates.Goals;

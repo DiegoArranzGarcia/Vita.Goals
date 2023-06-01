@@ -99,7 +99,7 @@ public class CreateTaskTests
         task.PlannedDate.Should().NotBeNull();
         task.PlannedDate!.Start.Should().Be(request.PlannedDateStart);
         task.PlannedDate.End.Should().Be(request.PlannedDateEnd);
-        
+
         //FIXME
         //Task.CreatedBy.Should().Be(UserBuilder.AliceUserId);
 

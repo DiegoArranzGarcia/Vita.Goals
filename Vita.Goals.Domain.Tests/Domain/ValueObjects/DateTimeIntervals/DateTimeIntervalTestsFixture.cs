@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Vita.Goals.Domain.Tests.ValueObjects.DateTimeIntervals;
+﻿namespace Vita.Goals.UnitTests.Domain.ValueObjects.DateTimeIntervals;
 
 public static class DateTimeIntervalTestsFixture
 {
@@ -11,14 +8,14 @@ public static class DateTimeIntervalTestsFixture
                                                      hour: 0,
                                                    minute: 0,
                                                    second: 0,
-                                                           TimeSpan.Zero);
+                                                   offset: TimeSpan.Zero);
     public static DateTimeOffset FirstFebrary => new(year: 2021,
                                                     month: 2,
                                                       day: 1,
                                                      hour: 0,
                                                    minute: 0,
                                                    second: 0,
-                                                           TimeSpan.Zero);
+                                                   offset: TimeSpan.Zero);
     public static IEnumerable<object[]> GetValidIntervalDates()
     {
         yield return new object[] { FirstJanuary, FirstFebrary };

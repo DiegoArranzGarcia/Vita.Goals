@@ -4,7 +4,7 @@ using Vita.Goals.Infrastructure.Clients.Identity;
 
 namespace Vita.Goals.Application.Commands.Services.CalendarServiceProviders;
 
-public class CalendarServicesProviderFactory
+public class CalendarServicesProviderFactory : ICalendarServicesProviderFactory
 {
     private readonly IServiceProvider _serviceProvider;
 

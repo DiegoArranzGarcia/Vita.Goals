@@ -13,6 +13,7 @@ public class GoalStatusSafeEnumConfiguration : IEntityTypeConfiguration<GoalStat
         builder.HasKey(o => o.Id);
 
         builder.Property(o => o.Id)
+               .HasColumnName("Id")
                .ValueGeneratedNever()
                .IsRequired();
 

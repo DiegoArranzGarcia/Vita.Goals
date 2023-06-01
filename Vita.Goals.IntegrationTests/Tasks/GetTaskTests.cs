@@ -1,13 +1,11 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
-using System.Net.Http;
-using Vita.Goals.Api.Endpoints.Goals.Ready;
+using Vita.Goals.Api.Endpoints.Tasks.GetById;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;
 using Vita.Goals.FunctionalTests.Fixtures.Extensions;
 using Vita.Goals.FunctionalTests.Tasks.Fixtures;
-using Vita.Tasks.Api.Endpoints.Tasks.GetById;
 
 namespace Vita.Goals.FunctionalTests.Tasks;
 
@@ -62,7 +60,7 @@ public class GetTaskTests
                                      .WithIdentity(UserBuilder.BobClaims);
 
         string endpointUri = IEndpoint.TestURLFor<GetTaskEndpoint>()
-                                      .Replace("{id}", aliceTask.Id.ToString());                
+                                      .Replace("{id}", aliceTask.Id.ToString());
 
         var (response, _) = await httpClient.GETAsync<EmptyRequest, TaskDto>(endpointUri, default);
 

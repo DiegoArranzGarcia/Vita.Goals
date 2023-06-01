@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using Bogus.DataSets;
+using Vita.Common;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 

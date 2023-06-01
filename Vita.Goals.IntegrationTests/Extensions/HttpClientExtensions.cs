@@ -1,9 +1,4 @@
 ﻿using FastEndpoints;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vita.Goals.FunctionalTests.Extensions;
 public static class HttpClientExtensions

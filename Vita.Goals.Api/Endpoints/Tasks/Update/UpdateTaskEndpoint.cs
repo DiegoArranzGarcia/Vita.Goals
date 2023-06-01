@@ -1,18 +1,12 @@
 ﻿using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
-using Vita.Goals.Api.Endpoints.Goals.Update;
-using Vita.Goals.Api.Extensions;
 using Vita.Goals.Application.Commands.Shared;
 using Vita.Goals.Application.Commands.Tasks;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Update;
-internal class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, EmptyResponse>
+public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 

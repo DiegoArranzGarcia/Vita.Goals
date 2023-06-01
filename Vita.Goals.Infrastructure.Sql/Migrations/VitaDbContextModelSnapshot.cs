@@ -20,7 +20,7 @@ namespace Vita.Persistance.Sql.Migrations
                 .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Categories.Category", b =>
                 {
@@ -130,18 +130,21 @@ namespace Vita.Persistance.Sql.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset(0)");
 
-                    b.Property<int>("TaskStatus")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("Title");
 
+                    b.Property<int>("_taskStatusId")
+                        .HasColumnType("int")
+                        .HasColumnName("TaskStatusId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssociatedToId");
+
+                    b.HasIndex("_taskStatusId");
 
                     b.ToTable("Tasks", (string)null);
                 });
@@ -159,6 +162,23 @@ namespace Vita.Persistance.Sql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TaskStatus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ready"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "InProgress"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Completed"
+                        });
                 });
 
             modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Goals.Goal", b =>
@@ -169,7 +189,7 @@ namespace Vita.Persistance.Sql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Vita.Goals.Domain.ValueObjects.DateTimeInterval", "AimDate", b1 =>
+                    b.OwnsOne("Vita.Goals.Domain.Aggregates.Goals.Goal.AimDate#Vita.Goals.Domain.ValueObjects.DateTimeInterval", "AimDate", b1 =>
                         {
                             b1.Property<Guid>("GoalId")
                                 .HasColumnType("uniqueidentifier");
@@ -182,7 +202,7 @@ namespace Vita.Persistance.Sql.Migrations
 
                             b1.HasKey("GoalId");
 
-                            b1.ToTable("Goals");
+                            b1.ToTable("Goals", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("GoalId");
@@ -200,7 +220,13 @@ namespace Vita.Persistance.Sql.Migrations
                         .HasForeignKey("AssociatedToId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.OwnsOne("Vita.Goals.Domain.ValueObjects.DateTimeInterval", "PlannedDate", b1 =>
+                    b.HasOne("Vita.Goals.Domain.Aggregates.Tasks.TaskStatus", "TaskStatus")
+                        .WithMany()
+                        .HasForeignKey("_taskStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Vita.Goals.Domain.Aggregates.Tasks.Task.PlannedDate#Vita.Goals.Domain.ValueObjects.DateTimeInterval", "PlannedDate", b1 =>
                         {
                             b1.Property<Guid>("TaskId")
                                 .HasColumnType("uniqueidentifier");
@@ -213,7 +239,7 @@ namespace Vita.Persistance.Sql.Migrations
 
                             b1.HasKey("TaskId");
 
-                            b1.ToTable("Tasks");
+                            b1.ToTable("Tasks", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("TaskId");
@@ -222,6 +248,8 @@ namespace Vita.Persistance.Sql.Migrations
                     b.Navigation("AssociatedTo");
 
                     b.Navigation("PlannedDate");
+
+                    b.Navigation("TaskStatus");
                 });
 
             modelBuilder.Entity("Vita.Goals.Domain.Aggregates.Goals.Goal", b =>

@@ -1,8 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using System.Net;
-using System.Net.Http.Json;
-using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Application.Queries.Goals;
 using Vita.Goals.Domain.Aggregates.Goals;
@@ -118,5 +116,5 @@ public class GetGoalTests
         goalDto.Status.Should().Be(GoalStatus.ToBeDefined.Name);
         goalDto.CreatedOn.Should().BeCloseTo(goal.CreatedOn, TimeSpan.FromSeconds(1));
     }
-   
+
 }

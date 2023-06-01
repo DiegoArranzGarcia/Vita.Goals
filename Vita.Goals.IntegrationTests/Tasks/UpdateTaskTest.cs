@@ -140,10 +140,8 @@ public class UpdateTaskTests
         GoalsDbContext context = Given.GetGoalsDbContext();
         Domain.Aggregates.Tasks.Task updatedTask = context.Tasks.First(x => x.Id == aliceTask.Id);
 
-        //FIXME
-        //updatedTask.TaskStatus.Should().Be(aliceTask.TaskStatus);
-
         updatedTask.Title.Should().Be(request.Title);
+        updatedTask.TaskStatus.Should().Be(aliceTask.TaskStatus);
         updatedTask.PlannedDate.Should().NotBeNull();
         updatedTask.PlannedDate!.Start.Should().Be(request.PlannedDateStart);
         updatedTask.PlannedDate!.End.Should().Be(request.PlannedDateEnd);

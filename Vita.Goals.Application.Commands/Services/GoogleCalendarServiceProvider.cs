@@ -28,10 +28,10 @@ internal class GoogleCalendarServiceProvider : ICalendarServicesProvider
         AccessTokenDto googleAccessToken = await _vitaIdentityApiClient.GetLoginProviderUserAccessToken(userId, _loginProvider.Id);
         _calendarService.HttpClient.SetBearerToken(googleAccessToken.Token);
 
-        IEnumerable<Domain.Aggregates.Tasks.Task> tasks = _taskRepository.Get((task) => task.AssociatedTo.CreatedBy == userId &&
+        IEnumerable<Task> tasks = _taskRepository.Get((task) => task.AssociatedTo.CreatedBy == userId &&
                                                                                         task.TaskStatus != Domain.Aggregates.Tasks.TaskStatus.Completed);
 
-        IEnumerable<Domain.Aggregates.Tasks.Task> scheduledTasks = tasks.Where(x => x.PlannedDate is not null);
+        IEnumerable<Task> scheduledTasks = tasks.Where(x => x.PlannedDate is not null);
 
         Calendar tasksCalendar = await _calendarService.Calendars.Insert(new Calendar()
         {
@@ -39,7 +39,7 @@ internal class GoogleCalendarServiceProvider : ICalendarServicesProvider
             Description = "Vita Calendar"
         }).ExecuteAsync();
 
-        foreach (Domain.Aggregates.Tasks.Task scheduledTask in scheduledTasks)
+        foreach (Task scheduledTask in scheduledTasks)
         {
             await _calendarService.Events.Insert(new Event()
             {

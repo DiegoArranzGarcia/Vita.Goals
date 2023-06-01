@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Vita.Common;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.ValueObjects;
 

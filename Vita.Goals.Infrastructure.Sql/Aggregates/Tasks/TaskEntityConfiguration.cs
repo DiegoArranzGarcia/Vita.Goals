@@ -20,10 +20,6 @@ public class TaskEntityConfiguration : EntityTypeConfiguration<Task>
                .IsRequired()
                .HasMaxLength(255);
 
-        builder.Property<int>("_taskStatusId")
-               .HasColumnName("TaskStatusId")
-               .IsRequired();
-
         builder.Property(t => t.CreatedOn)
                .HasColumnType("datetimeoffset(0)")
                .IsRequired();
@@ -32,12 +28,10 @@ public class TaskEntityConfiguration : EntityTypeConfiguration<Task>
                .WithMany(x => x.Tasks)
                .IsRequired(false);
 
-        builder.HasOne(t => t.TaskStatus)
-               .WithMany()
-               .HasForeignKey("_taskStatusId");
-
-        builder.Navigation(x => x.TaskStatus)
-               .AutoInclude();
+        builder.Property(x => x.TaskStatus)
+               .HasColumnName("TaskStatusId")
+               .HasConversion(p => p.Id,
+                              p => Core.Domain.Enumeration.FromValue<TaskStatus>(p));
 
         builder.OwnsOne(t => t.PlannedDate);
     }

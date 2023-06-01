@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Vita.Goals.Application.Queries.Tasks;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Get;
-internal class GetTasksEndpoint : Endpoint<GetTasksRequest, IEnumerable<TaskDto>>
+public class GetTasksEndpoint : Endpoint<GetTasksRequest, IEnumerable<TaskDto>>
 {
     private readonly ITaskQueryStore _taskQueryStore;
 

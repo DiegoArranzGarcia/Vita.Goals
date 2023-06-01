@@ -2,8 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Vita.Common;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;
 public class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
@@ -24,26 +26,27 @@ public class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(CreateGoalRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(CreateGoalRequest request, CancellationToken ct)
     {
         if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
         {
-            await SendUnauthorizedAsync(cancellationToken);
+            await SendUnauthorizedAsync(ct);
             return;
         }
 
-        CreateGoalCommand command = new(request.Title, request.Description, userId, request.AimDateStart, request.AimDateEnd);
+        DateTimeInterval? aimDate = request.AimDateStart.HasValue && request.AimDateEnd.HasValue ?
+                                    new DateTimeInterval(request.AimDateStart.Value, request.AimDateEnd.Value) :
+                                    null;
 
-        Guid createdGoalId = await _sender.Send(command, cancellationToken);
+        CreateGoalCommand command = new(request.Title, request.Description, userId, aimDate);
 
-        //HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Location");
-        //HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
+        Guid createdGoalId = await _sender.Send(command, ct);
 
         await SendCreatedAtAsync<GetGoalEndpoint>
         (
             routeValues: new { id = createdGoalId },
             responseBody: new EmptyResponse(),
-            cancellation: cancellationToken
+            cancellation: ct
         );
     }
 }

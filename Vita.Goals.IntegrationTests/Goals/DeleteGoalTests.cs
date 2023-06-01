@@ -2,7 +2,6 @@
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
-using Vita.Goals.Api.Endpoints.Goals.Complete;
 using Vita.Goals.Api.Endpoints.Goals.Delete;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Fixtures.Builders;

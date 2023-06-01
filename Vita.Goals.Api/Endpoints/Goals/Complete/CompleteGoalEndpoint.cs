@@ -7,7 +7,7 @@ using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Complete;
 
-internal class CompleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
+public class CompleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
 

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Vita.Core.Domain;
 using Vita.Goals.Application.Queries.Tasks;
 using Vita.Goals.Infrastructure.Sql.QueryStores.Configuration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Vita.Goals.Infrastructure.Sql.QueryStores;
 
@@ -59,7 +59,7 @@ public class TaskQueryStore : ITaskQueryStore
 
         if (!string.IsNullOrEmpty(status))
         {
-            Domain.Aggregates.Tasks.TaskStatus taskStatus = Domain.Aggregates.Tasks.TaskStatus.GetAllValues().Single(x => x.Name == status);
+            Domain.Aggregates.Tasks.TaskStatus taskStatus = Enumeration.FromDisplayName<Domain.Aggregates.Tasks.TaskStatus>(status);
             sqlQuery += $@" and (t.TaskStatusId != {taskStatus.Id})";
         }
 

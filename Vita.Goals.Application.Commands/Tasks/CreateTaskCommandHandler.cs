@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Vita.Common;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Domain.ValueObjects;

@@ -2,7 +2,7 @@
 
 namespace Vita.Goals.Infrastructure.Clients.Identity;
 
-public class VitaIdentityApiClient
+public class VitaIdentityApiClient : IVitaIdentityApiClient
 {
     private readonly HttpClient _httpClient;
 

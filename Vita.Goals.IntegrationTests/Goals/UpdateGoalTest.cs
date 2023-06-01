@@ -2,7 +2,6 @@
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
-using Vita.Goals.Api.Endpoints.Goals.Create;
 using Vita.Goals.Api.Endpoints.Goals.Update;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.FunctionalTests.Extensions;
@@ -122,9 +121,7 @@ public class UpdateGoalTests
         updatedGoal.AimDate.Should().NotBeNull();
         updatedGoal.AimDate!.Start.Should().Be(request.AimDateStart);
         updatedGoal.AimDate!.End.Should().Be(request.AimDateEnd);
-
-        //FIXME
-        //updatedGoal.GoalStatus.Should().Be(aliceGoal.GoalStatus);
+        updatedGoal.GoalStatus.Should().Be(aliceGoal.GoalStatus);
         updatedGoal.CreatedBy.Should().Be(aliceGoal.CreatedBy);
         updatedGoal.CreatedOn.Should().BeCloseTo(aliceGoal.CreatedOn, TimeSpan.FromSeconds(1));
     }

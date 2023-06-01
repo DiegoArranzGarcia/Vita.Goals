@@ -2,7 +2,6 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading;
 using System.Threading.Tasks;
 using Vita.Goals.Application.Queries.Goals;
@@ -30,9 +29,9 @@ public class GoalQueryStore : IGoalQueryStore
         await connection.OpenAsync(cancellationToken);
 
         CommandDefinition commandDefinition = new(query, parameters: new { id }, cancellationToken: cancellationToken);
-        dynamic result = await connection.QueryFirstOrDefaultAsync<dynamic>(commandDefinition) ?? 
+        dynamic result = await connection.QueryFirstOrDefaultAsync<dynamic>(commandDefinition) ??
                          throw new KeyNotFoundException();
-        
+
         Guid createdBy = (Guid)result.CreatedBy;
         if (createdBy != userId)
             throw new UnauthorizedAccessException();

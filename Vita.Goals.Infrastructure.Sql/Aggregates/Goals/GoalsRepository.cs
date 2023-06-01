@@ -1,7 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vita.Core.Domain.Repositories;
@@ -26,16 +24,18 @@ public class GoalsRepository : IGoalsRepository
                throw new KeyNotFoundException();
     }
 
-    public Task<Goal> Add(Goal goal)
+    public Task Add(Goal goal)
     {
-        var entry = _context.Goals.Add(goal);
-        return Task.FromResult(entry.Entity);
+        _context.Goals.Add(goal);
+
+        return Task.CompletedTask;
     }
 
-    public Task<Goal> Update(Goal goal)
+    public Task Update(Goal goal)
     {
-        var entry = _context.Goals.Update(goal);
-        return Task.FromResult(entry.Entity);
+        _context.Goals.Update(goal);
+
+        return Task.CompletedTask;
     }
 
     public async Task Delete(Guid id)

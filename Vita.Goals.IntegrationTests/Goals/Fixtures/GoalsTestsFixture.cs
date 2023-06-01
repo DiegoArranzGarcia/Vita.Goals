@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
-using System;
+using Vita.Common;
 using Vita.Goals.Api.Endpoints.Goals.Create;
 using Vita.Goals.Api.Endpoints.Goals.Update;
 using Vita.Goals.Domain.Aggregates.Goals;

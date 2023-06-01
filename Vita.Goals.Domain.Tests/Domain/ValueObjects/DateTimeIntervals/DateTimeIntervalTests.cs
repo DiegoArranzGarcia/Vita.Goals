@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Vita.Common;
 using Vita.Goals.Domain.ValueObjects;
-using Xunit;
 
-namespace Vita.Goals.Domain.Tests.ValueObjects.DateTimeIntervals;
+namespace Vita.Goals.UnitTests.Domain.ValueObjects.DateTimeIntervals;
 
 public class DateTimeIntervalTests
 {
@@ -12,14 +11,17 @@ public class DateTimeIntervalTests
     {
         var interval = new DateTimeInterval(start, end);
 
-        Assert.Equal(expected: start, actual: interval.Start);
-        Assert.Equal(expected: end, actual: interval.End);
+        interval.Start.Should().Be(start);
+        interval.End.Should().Be(end);
     }
 
     [Fact]
     public void GivenStartDateGreatherThanEndDate_WhenCreatingDateTimeInterval_ShouldThrowException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new DateTimeInterval(start: DateTimeIntervalTestsFixture.FirstFebrary,
-                                                                                end: DateTimeIntervalTestsFixture.FirstJanuary));
+        //Act
+        Action act = () => _ = new DateTimeInterval(start: DateTimeIntervalTestsFixture.FirstFebrary,
+                                                      end: DateTimeIntervalTestsFixture.FirstJanuary);
+
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 }
