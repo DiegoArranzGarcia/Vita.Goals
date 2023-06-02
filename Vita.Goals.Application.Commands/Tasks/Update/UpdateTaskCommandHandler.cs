@@ -6,14 +6,14 @@ using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.Domain.Aggregates.Tasks;
 using Vita.Goals.Domain.ValueObjects;
 
-namespace Vita.Goals.Application.Commands.Tasks;
+namespace Vita.Goals.Application.Commands.Tasks.Update;
 
 public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
 {
-    private readonly IGoalsRepository _goalsRepository;
+    private readonly IGoalRepository _goalsRepository;
     private readonly ITaskRepository _taskRepository;
 
-    public UpdateTaskCommandHandler(IGoalsRepository goalsRepository, ITaskRepository taskRepository)
+    public UpdateTaskCommandHandler(IGoalRepository goalsRepository, ITaskRepository taskRepository)
     {
         _goalsRepository = goalsRepository;
         _taskRepository = taskRepository;

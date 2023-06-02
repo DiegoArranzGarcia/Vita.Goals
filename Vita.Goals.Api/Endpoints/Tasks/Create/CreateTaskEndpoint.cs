@@ -2,9 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Vita.Common;
 using Vita.Goals.Api.Endpoints.Tasks.GetById;
 using Vita.Goals.Application.Commands.Shared;
-using Vita.Goals.Application.Commands.Tasks;
+using Vita.Goals.Application.Commands.Tasks.Create;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Create;
 public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, EmptyResponse>
@@ -33,7 +34,11 @@ public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, EmptyResponse>
             return;
         }
 
-        CreateTaskCommand command = new(request.GoalId, request.Title, new User(userId), request.PlannedDateStart, request.PlannedDateEnd);
+        DateTimeInterval? plannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ?
+                                        new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) :
+                                        null;
+
+        CreateTaskCommand command = new(request.GoalId, request.Title, new User(userId), plannedDate);
         Guid createdTaskId = await _sender.Send(command, ct);
 
         await SendCreatedAtAsync<GetTaskEndpoint>

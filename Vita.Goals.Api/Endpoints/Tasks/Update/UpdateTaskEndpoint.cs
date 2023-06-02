@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Shared;
-using Vita.Goals.Application.Commands.Tasks;
+using Vita.Goals.Application.Commands.Tasks.Update;
 
 namespace Vita.Goals.Api.Endpoints.Tasks.Update;
 public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, EmptyResponse>

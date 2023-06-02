@@ -19,7 +19,7 @@ public static class Startup
         string connectionString = configuration.GetConnectionString("GoalsDbContext");
         services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(connectionString));
 
-        services.AddScoped<IGoalsRepository, GoalsRepository>();
+        services.AddScoped<IGoalRepository, GoalsRepository>();
         services.AddScoped<ITaskRepository, TaskRepository>();
 
         services.AddScoped<IGoalQueryStore, GoalQueryStore>();

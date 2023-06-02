@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Vita.Goals.Domain\Vita.Goals.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+  	<InternalsVisibleTo Include="Vita.Goals.UnitTests" />
+  </ItemGroup>
+
 </Project>

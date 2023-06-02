@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Goals.Delete;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Delete;
 internal class DeleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>

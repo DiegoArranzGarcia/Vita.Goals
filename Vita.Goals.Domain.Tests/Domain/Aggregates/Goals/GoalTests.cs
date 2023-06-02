@@ -67,6 +67,6 @@ public class GoalTests
     {
         goal.Complete();
 
-        goal.GoalStatus.Should().Be(GoalStatus.Completed);
+        goal.Status.Should().Be(GoalStatus.Completed);
     }
 }

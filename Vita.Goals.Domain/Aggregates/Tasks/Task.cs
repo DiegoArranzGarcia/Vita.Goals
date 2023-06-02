@@ -11,7 +11,7 @@ public class Task : Entity
 {
     private string _title;
 
-    public TaskStatus TaskStatus { get; private set; }
+    public TaskStatus Status { get; private set; }
     public DateTimeInterval? PlannedDate { get; set; }
     public DateTimeOffset CreatedOn { get; init; }
     public virtual Goal AssociatedTo { get; set; }
@@ -28,7 +28,7 @@ public class Task : Entity
         PlannedDate = plannedDate;
         AssociatedTo = associatedTo;
         CreatedOn = DateTimeOffset.UtcNow;
-        TaskStatus = TaskStatus.Ready;
+        Status = TaskStatus.Ready;
     }
 
     public string Title

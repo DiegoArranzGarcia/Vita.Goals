@@ -39,4 +39,9 @@
     <ProjectReference Include="..\Vita.Goals.Domain\Vita.Goals.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Commands\Tasks\Delete\" />
+    <Folder Include="Application\Commands\Tasks\Update\" />
+  </ItemGroup>
+
 </Project>

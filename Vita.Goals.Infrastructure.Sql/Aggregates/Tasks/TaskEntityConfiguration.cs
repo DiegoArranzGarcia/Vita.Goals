@@ -28,7 +28,7 @@ public class TaskEntityConfiguration : EntityTypeConfiguration<Task>
                .WithMany(x => x.Tasks)
                .IsRequired(false);
 
-        builder.Property(x => x.TaskStatus)
+        builder.Property(x => x.Status)
                .HasColumnName("TaskStatusId")
                .HasConversion(p => p.Id,
                               p => Core.Domain.Enumeration.FromValue<TaskStatus>(p));

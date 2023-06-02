@@ -1,4 +1,4 @@
-﻿using Vita.Goals.Application.Commands.Goals;
+﻿using Vita.Goals.Application.Commands.Goals.Ready;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
@@ -8,7 +8,7 @@ public class ReadyGoalCommandHandlerTest
     [Theory]
     [AutoMoqData]
     public async Task GivenReadyGoalCommand_ButNotAllowedUser_WhenHandle_ThenThrowsUnauthorizedAccessException(
-        [Frozen] Mock<IGoalsRepository> goalRepository,
+        [Frozen] Mock<IGoalRepository> goalRepository,
         Goal goal,
         ReadyGoalCommand command,
         ReadyGoalCommandHandler sut)
@@ -27,7 +27,7 @@ public class ReadyGoalCommandHandlerTest
     [Theory]
     [AutoMoqData]
     public async Task GivenReadyGoalCommand_WhenHandle_ThenReadysTheGoal(
-        [Frozen] Mock<IGoalsRepository> goalRepository,
+        [Frozen] Mock<IGoalRepository> goalRepository,
         Fixture fixture,
         ReadyGoalCommand command,
         ReadyGoalCommandHandler sut)
@@ -51,13 +51,13 @@ public class ReadyGoalCommandHandlerTest
         Goal capturedGoal = goalsCaptured.First();
 
         capturedGoal.Id.Should().Be(goal.Id);
-        capturedGoal.GoalStatus.Should().Be(GoalStatus.Ready);
+        capturedGoal.Status.Should().Be(GoalStatus.Ready);
     }
 
     [Theory]
     [AutoMoqData]
     public async Task GivenReadyGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
-       [Frozen] Mock<IGoalsRepository> goalRepository,
+       [Frozen] Mock<IGoalRepository> goalRepository,
        Fixture fixture,
        ReadyGoalCommand command,
        ReadyGoalCommandHandler sut)

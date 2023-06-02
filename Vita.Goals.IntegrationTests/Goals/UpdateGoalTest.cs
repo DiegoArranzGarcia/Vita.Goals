@@ -121,7 +121,7 @@ public class UpdateGoalTests
         updatedGoal.AimDate.Should().NotBeNull();
         updatedGoal.AimDate!.Start.Should().Be(request.AimDateStart);
         updatedGoal.AimDate!.End.Should().Be(request.AimDateEnd);
-        updatedGoal.GoalStatus.Should().Be(aliceGoal.GoalStatus);
+        updatedGoal.Status.Should().Be(aliceGoal.Status);
         updatedGoal.CreatedBy.Should().Be(aliceGoal.CreatedBy);
         updatedGoal.CreatedOn.Should().BeCloseTo(aliceGoal.CreatedOn, TimeSpan.FromSeconds(1));
     }

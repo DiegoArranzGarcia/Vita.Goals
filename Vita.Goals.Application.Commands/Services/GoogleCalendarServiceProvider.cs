@@ -29,7 +29,7 @@ internal class GoogleCalendarServiceProvider : ICalendarServicesProvider
         _calendarService.HttpClient.SetBearerToken(googleAccessToken.Token);
 
         IEnumerable<Task> tasks = _taskRepository.Get((task) => task.AssociatedTo.CreatedBy == userId &&
-                                                                                        task.TaskStatus != Domain.Aggregates.Tasks.TaskStatus.Completed);
+                                                                                        task.Status != Domain.Aggregates.Tasks.TaskStatus.Completed);
 
         IEnumerable<Task> scheduledTasks = tasks.Where(x => x.PlannedDate is not null);
 

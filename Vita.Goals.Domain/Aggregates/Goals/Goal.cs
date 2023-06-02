@@ -12,7 +12,7 @@ public class Goal : Entity
 {
     private string _title;
 
-    public GoalStatus GoalStatus { get; private set; }
+    public GoalStatus Status { get; private set; }
     public string? Description { get; set; }
     public DateTimeInterval? AimDate { get; set; }
     public ICollection<Task> Tasks { get; set; }
@@ -32,7 +32,7 @@ public class Goal : Entity
         Description = description;
         AimDate = aimDate;
         CreatedOn = DateTimeOffset.UtcNow;
-        GoalStatus = GoalStatus.ToBeDefined;
+        Status = GoalStatus.ToBeDefined;
     }
 
     public string Title
@@ -43,16 +43,16 @@ public class Goal : Entity
 
     public void Complete()
     {
-        GoalStatus = GoalStatus.Completed;
+        Status = GoalStatus.Completed;
     }
 
     public void Ready()
     {
-        GoalStatus = GoalStatus.Ready;
+        Status = GoalStatus.Ready;
     }
 
     public void InProgress()
     {
-        GoalStatus = GoalStatus.InProgress;
+        Status = GoalStatus.InProgress;
     }
 }

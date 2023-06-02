@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Common;
-using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Goals.Update;
 using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Update;

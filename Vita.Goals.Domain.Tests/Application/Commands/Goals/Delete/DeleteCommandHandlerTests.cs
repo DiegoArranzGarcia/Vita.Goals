@@ -1,4 +1,4 @@
-﻿using Vita.Goals.Application.Commands.Goals;
+﻿using Vita.Goals.Application.Commands.Goals.Delete;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
@@ -8,10 +8,9 @@ public class DeleteCommandHandlerTests
     [Theory]
     [AutoMoqData]
     public async Task GivenDeleteGoalCommand_WhenHandle_ThenCallsTheAppropiateRepositoryMethods(
-        [Frozen] Mock<IGoalsRepository> goalsRepository,
+        [Frozen] Mock<IGoalRepository> goalsRepository,
         DeleteGoalCommand command,
-        DeleteGoalCommandHandler sut
-        )
+        DeleteGoalCommandHandler sut)
     {
         //Arrange
         goalsRepository.Setup(x => x.Delete(command.Id))

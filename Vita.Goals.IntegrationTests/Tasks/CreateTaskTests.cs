@@ -95,7 +95,7 @@ public class CreateTaskTests
 
         task.Title.Should().Be(request.Title);
         task.AssociatedTo.Should().BeNull();
-        task.TaskStatus.Should().Be(Domain.Aggregates.Tasks.TaskStatus.Ready);
+        task.Status.Should().Be(Domain.Aggregates.Tasks.TaskStatus.Ready);
         task.PlannedDate.Should().NotBeNull();
         task.PlannedDate!.Start.Should().Be(request.PlannedDateStart);
         task.PlannedDate.End.Should().Be(request.PlannedDateEnd);

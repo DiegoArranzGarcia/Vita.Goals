@@ -141,7 +141,7 @@ public class UpdateTaskTests
         Domain.Aggregates.Tasks.Task updatedTask = context.Tasks.First(x => x.Id == aliceTask.Id);
 
         updatedTask.Title.Should().Be(request.Title);
-        updatedTask.TaskStatus.Should().Be(aliceTask.TaskStatus);
+        updatedTask.Status.Should().Be(aliceTask.Status);
         updatedTask.PlannedDate.Should().NotBeNull();
         updatedTask.PlannedDate!.Start.Should().Be(request.PlannedDateStart);
         updatedTask.PlannedDate!.End.Should().Be(request.PlannedDateEnd);

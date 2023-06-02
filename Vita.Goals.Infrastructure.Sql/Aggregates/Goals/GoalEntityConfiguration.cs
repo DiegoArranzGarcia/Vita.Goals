@@ -25,7 +25,7 @@ public class GoalEntityConfiguration : EntityTypeConfiguration<Goal>
                .HasColumnName(nameof(Goal.CreatedBy))
                .IsRequired();
 
-        builder.Property(x => x.GoalStatus)
+        builder.Property(x => x.Status)
                .HasColumnName("GoalStatusId")
                .HasConversion(p => p.Id,
                               p => Core.Domain.Enumeration.FromValue<GoalStatus>(p));

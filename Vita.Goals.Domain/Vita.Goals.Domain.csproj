@@ -11,4 +11,9 @@
     <PackageReference Include="Vita.Core.Domain" Version="0.2.21" />
   </ItemGroup>
 
+
+  <ItemGroup>
+  	<InternalsVisibleTo Include="Vita.Goals.UnitTests" />
+  </ItemGroup>
+
 </Project>

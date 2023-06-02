@@ -33,6 +33,7 @@
 
   <ItemGroup>
   	<InternalsVisibleTo Include="Vita.Goals.FunctionalTests" />
+	<InternalsVisibleTo Include="Vita.Goals.UnitTests" />
   </ItemGroup>
 	
 </Project>

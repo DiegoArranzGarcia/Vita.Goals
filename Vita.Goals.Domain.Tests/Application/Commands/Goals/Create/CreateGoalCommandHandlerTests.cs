@@ -1,4 +1,4 @@
-﻿using Vita.Goals.Application.Commands.Goals;
+﻿using Vita.Goals.Application.Commands.Goals.Create;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
@@ -10,7 +10,7 @@ public class CreateGoalCommandHandlerTests
     [Theory]
     [AutoMoqData]
     public async Task GivenCreateGoalCommand_WhenHandle_ThenReturnsGuidOfCreatedGoal(
-        [Frozen] Mock<IGoalsRepository> repository,
+        [Frozen] Mock<IGoalRepository> repository,
         CreateGoalCommand command,
         CreateGoalCommandHandler sut)
     {
@@ -30,7 +30,7 @@ public class CreateGoalCommandHandlerTests
         capturedGoal.CreatedBy.Should().Be(command.CreatedBy);
         capturedGoal.Title.Should().Be(command.Title);
         capturedGoal.Description.Should().Be(command.Description);
-        capturedGoal.GoalStatus.Should().Be(GoalStatus.ToBeDefined);
+        capturedGoal.Status.Should().Be(GoalStatus.ToBeDefined);
         capturedGoal.CreatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
 
         createdGoalId.Should().Be(capturedGoal.Id);
@@ -39,7 +39,7 @@ public class CreateGoalCommandHandlerTests
     [Theory]
     [AutoMoqData]
     public async Task GivenCreateGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
-    [Frozen] Mock<IGoalsRepository> repository,
+    [Frozen] Mock<IGoalRepository> repository,
     CreateGoalCommand command,
     CreateGoalCommandHandler sut)
     {

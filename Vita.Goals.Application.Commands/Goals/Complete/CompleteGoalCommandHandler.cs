@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vita.Goals.Domain.Aggregates.Goals;
 
-namespace Vita.Goals.Application.Commands.Goals;
+namespace Vita.Goals.Application.Commands.Goals.Complete;
 
 public class CompleteGoalCommandHandler : IRequestHandler<CompleteGoalCommand>
 {
-    private readonly IGoalsRepository _goalsRepository;
+    private readonly IGoalRepository _goalsRepository;
 
-    public CompleteGoalCommandHandler(IGoalsRepository goalsRepository)
+    public CompleteGoalCommandHandler(IGoalRepository goalsRepository)
     {
         _goalsRepository = goalsRepository;
     }

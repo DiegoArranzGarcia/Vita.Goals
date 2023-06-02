@@ -16,8 +16,9 @@
     <ProjectReference Include="..\Vita.Goals.Application.Queries\Vita.Goals.Application.Queries.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Vita.Goals.FunctionalTests" />
-	</ItemGroup>
+  <ItemGroup>
+  	<InternalsVisibleTo Include="Vita.Goals.UnitTests" />
+  	<InternalsVisibleTo Include="Vita.Goals.FunctionalTests" />
+  </ItemGroup>
 
 </Project>

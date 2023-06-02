@@ -8,7 +8,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Vita.Goals.Infrastructure.Sql.Aggregates.Goals;
 
-public class GoalsRepository : IGoalsRepository
+public class GoalsRepository : IGoalRepository
 {
     private readonly GoalsDbContext _context;
     public IUnitOfWork UnitOfWork => _context;

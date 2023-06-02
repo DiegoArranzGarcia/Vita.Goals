@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Common;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
-using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Goals.Create;
 using Vita.Goals.Domain.ValueObjects;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;

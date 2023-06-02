@@ -61,7 +61,7 @@ public class CreateGoalTests
         GoalsDbContext context = Given.GetGoalsDbContext();
         Goal goal = context.Goals.Single();
 
-        goal.GoalStatus.Should().Be(GoalStatus.ToBeDefined);
+        goal.Status.Should().Be(GoalStatus.ToBeDefined);
         goal.Title.Should().Be(request.Title);
         goal.Description.Should().Be(request.Description);
         goal.AimDate.Start.Should().Be(request.AimDateStart);

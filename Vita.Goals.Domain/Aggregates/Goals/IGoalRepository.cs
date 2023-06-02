@@ -5,7 +5,7 @@ using Vita.Core.Domain.Repositories;
 
 namespace Vita.Goals.Domain.Aggregates.Goals;
 
-public interface IGoalsRepository : IRepository<Goal>
+public interface IGoalRepository : IRepository<Goal>
 {
     Task Add(Goal goal);
     Task Update(Goal goal);

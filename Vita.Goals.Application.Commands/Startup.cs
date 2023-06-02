@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Vita.Goals.Application.Commands.Goals;
+using Vita.Goals.Application.Commands.Goals.Create;
 using Vita.Goals.Application.Commands.Services.CalendarServiceProviders;
 
 namespace Vita.Goals.Application.Commands;

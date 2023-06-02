@@ -109,7 +109,7 @@ public class CompleteGoalTests
         GoalsDbContext context = Given.GetGoalsDbContext();
         Goal updatedGoal = context.Goals.First(x => x.Id == aliceGoal.Id);
 
-        updatedGoal.GoalStatus.Should().Be(GoalStatus.Completed);
-        updatedGoal.Should().BeEquivalentTo(aliceGoal, options => options.Excluding(x => x.GoalStatus));
+        updatedGoal.Status.Should().Be(GoalStatus.Completed);
+        updatedGoal.Should().BeEquivalentTo(aliceGoal, options => options.Excluding(x => x.Status));
     }
 }
