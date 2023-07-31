@@ -1,17 +1,22 @@
-﻿using Vita.Goals.Application.Commands.Goals.InProgress;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vita.Goals.Application.Commands.Goals.Update;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
-namespace Vita.Goals.UnitTests.Application.Commands.Goals.InProgress;
-public class InProgressGoalCommandHandlerTest
+namespace Vita.Goals.UnitTests.Application.Commands.Goals;
+public class UpdateGoalCommandHandlerTests
 {
     [Theory]
     [AutoMoqData]
-    public async Task GivenInProgressGoalCommand_ButNotAllowedUser_WhenHandle_ThenThrowsUnauthorizedAccessException(
+    public async Task GivenUpdateGoalCommand_ButNotAllowedUser_WhenHandle_ThenThrowsUnauthorizedAccessException(
         [Frozen] Mock<IGoalRepository> goalRepository,
         Goal goal,
-        InProgressGoalCommand command,
-        InProgressGoalCommandHandler sut)
+        UpdateGoalCommand command,
+        UpdateGoalCommandHandler sut)
     {
         //Arrange
         goalRepository.Setup(x => x.FindById(command.Id, default))
@@ -26,11 +31,11 @@ public class InProgressGoalCommandHandlerTest
 
     [Theory]
     [AutoMoqData]
-    public async Task GivenInProgressGoalCommand_WhenHandle_ThenChangesToInProgressTheGoal(
+    public async Task GivenUpdateGoalCommand_WhenHandle_ThenUpdatesTheGoal(
         [Frozen] Mock<IGoalRepository> goalRepository,
         Fixture fixture,
-        InProgressGoalCommand command,
-        InProgressGoalCommandHandler sut)
+        UpdateGoalCommand command,
+        UpdateGoalCommandHandler sut)
     {
         //Arrange
         fixture.Inject(command.User.Id);
@@ -50,17 +55,23 @@ public class InProgressGoalCommandHandlerTest
         goalsCaptured.Should().ContainSingle();
         Goal capturedGoal = goalsCaptured.First();
 
+        capturedGoal.Title.Should().Be(command.Title);
+        capturedGoal.AimDate.Should().Be(command.AimDate);
+        capturedGoal.Description.Should().Be(command.Description);
+
         capturedGoal.Id.Should().Be(goal.Id);
-        capturedGoal.Status.Should().Be(GoalStatus.InProgress);
+        capturedGoal.Status.Should().Be(goal.Status);        
+        capturedGoal.CreatedOn.Should().Be(goal.CreatedOn);
+        capturedGoal.CreatedBy.Should().Be(goal.CreatedBy);
     }
 
     [Theory]
     [AutoMoqData]
-    public async Task GivenInProgressGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
+    public async Task GivenUpdateGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
        [Frozen] Mock<IGoalRepository> goalRepository,
        Fixture fixture,
-       InProgressGoalCommand command,
-       InProgressGoalCommandHandler sut)
+       UpdateGoalCommand command,
+       UpdateGoalCommandHandler sut)
     {
         //Arrange
         fixture.Inject(command.User.Id);

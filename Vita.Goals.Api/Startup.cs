@@ -1,6 +1,10 @@
-﻿using FastEndpoints;
+﻿using AutoMapper;
+using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
+using System.Reflection;
+using Vita.Goals.Api.Profiles.Authorization;
 using Vita.Goals.Application.Commands;
 
 namespace Vita.Goals.Api;
@@ -28,6 +32,8 @@ public static class Startup
         });
 
         services.ConfigureApplicationCommandServices();
+
+        services.AddAutoMapper(config => config.AddProfile(typeof(AuthorizationProfile)));
     }
 }
 

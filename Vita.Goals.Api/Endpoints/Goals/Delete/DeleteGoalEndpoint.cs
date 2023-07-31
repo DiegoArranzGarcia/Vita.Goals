@@ -3,15 +3,18 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals.Delete;
+using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Delete;
 internal class DeleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
+    private readonly AutoMapper.IMapper _mapper;
 
-    public DeleteGoalEndpoint(ISender sender)
+    public DeleteGoalEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -23,17 +26,13 @@ internal class DeleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(EmptyRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(cancellationToken);
-            return;
-        }
+        User user = _mapper.Map<User>(User);
 
-        DeleteGoalCommand deleteGoalCommand = new(Route<Guid>("id"));
-        await _sender.Send(deleteGoalCommand, cancellationToken);
+        DeleteGoalCommand deleteGoalCommand = new(Route<Guid>("id"), user);
+        await _sender.Send(deleteGoalCommand, ct);
 
-        await SendNoContentAsync(cancellationToken);
+        await SendNoContentAsync(ct);
     }
 }

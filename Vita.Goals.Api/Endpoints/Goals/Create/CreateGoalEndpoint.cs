@@ -1,20 +1,21 @@
 ﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 using Vita.Common;
 using Vita.Goals.Api.Endpoints.Goals.GetById;
 using Vita.Goals.Application.Commands.Goals.Create;
-using Vita.Goals.Domain.ValueObjects;
+using Vita.Goals.Application.Commands.Shared;
 
 namespace Vita.Goals.Api.Endpoints.Goals.Create;
 public class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 {
+    private readonly AutoMapper.IMapper _mapper;
     private readonly ISender _sender;
 
-    public CreateGoalEndpoint(ISender sender)
+    public CreateGoalEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -28,17 +29,13 @@ public class CreateGoalEndpoint : Endpoint<CreateGoalRequest, EmptyResponse>
 
     public async override Task HandleAsync(CreateGoalRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(ct);
-            return;
-        }
+        User user = _mapper.Map<User>(User);
 
         DateTimeInterval? aimDate = request.AimDateStart.HasValue && request.AimDateEnd.HasValue ?
                                     new DateTimeInterval(request.AimDateStart.Value, request.AimDateEnd.Value) :
                                     null;
 
-        CreateGoalCommand command = new(request.Title, request.Description, userId, aimDate);
+        CreateGoalCommand command = new(request.Title, request.Description, user.Id, aimDate);
 
         Guid createdGoalId = await _sender.Send(command, ct);
 

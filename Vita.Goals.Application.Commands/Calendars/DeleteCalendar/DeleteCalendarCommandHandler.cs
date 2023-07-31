@@ -10,10 +10,10 @@ using Vita.Goals.Infrastructure.Clients.Identity;
 namespace Vita.Goals.Application.Commands.Calendars.DeleteCalendar;
 public class DeleteCalendarCommandHandler : IRequestHandler<DeleteCalendarCommand>
 {
-    private readonly VitaIdentityApiClient _vitaIdentityApiClient;
-    private readonly CalendarServicesProviderFactory _calendarServicesProviderFactory;
+    private readonly IVitaIdentityApiClient _vitaIdentityApiClient;
+    private readonly ICalendarServicesProviderFactory _calendarServicesProviderFactory;
 
-    public DeleteCalendarCommandHandler(VitaIdentityApiClient vitaIdentityApiClient, CalendarServicesProviderFactory calendarServicesProviderFactory)
+    public DeleteCalendarCommandHandler(IVitaIdentityApiClient vitaIdentityApiClient, ICalendarServicesProviderFactory calendarServicesProviderFactory)
     {
         _vitaIdentityApiClient = vitaIdentityApiClient;
         _calendarServicesProviderFactory = calendarServicesProviderFactory;

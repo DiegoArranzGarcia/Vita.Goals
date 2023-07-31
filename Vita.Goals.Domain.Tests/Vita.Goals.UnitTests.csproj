@@ -35,13 +35,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Vita.Goals.Api\Vita.Goals.Api.csproj" />
     <ProjectReference Include="..\Vita.Goals.Application.Commands\Vita.Goals.Application.Commands.csproj" />
     <ProjectReference Include="..\Vita.Goals.Domain\Vita.Goals.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Commands\Tasks\Delete\" />
-    <Folder Include="Application\Commands\Tasks\Update\" />
+    <Folder Include="Api\Endpoints\NewFolder\" />
   </ItemGroup>
 
 </Project>

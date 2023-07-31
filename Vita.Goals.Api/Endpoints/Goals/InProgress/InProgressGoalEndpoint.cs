@@ -10,10 +10,12 @@ namespace Vita.Goals.Api.Endpoints.Goals.InProgress;
 internal class InProgressGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
+    private readonly AutoMapper.IMapper _mapper;
 
-    public InProgressGoalEndpoint(ISender sender)
+    public InProgressGoalEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -25,17 +27,13 @@ internal class InProgressGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
                           .WithTags("Goals"));
     }
 
-    public async override Task HandleAsync(EmptyRequest request, CancellationToken cancellationToken)
+    public async override Task HandleAsync(EmptyRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(cancellationToken);
-            return;
-        }
+        User user = _mapper.Map<User>(User);
 
-        InProgressGoalCommand command = new(Route<Guid>("id"), new User(userId));
-        await _sender.Send(command, cancellationToken);
+        InProgressGoalCommand command = new(Route<Guid>("id"), user);
+        await _sender.Send(command, ct);
 
-        await SendNoContentAsync(cancellationToken);
+        await SendNoContentAsync(ct);
     }
 }

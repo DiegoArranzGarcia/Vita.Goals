@@ -12,11 +12,11 @@ namespace Vita.Goals.Application.Commands.Services;
 internal class GoogleCalendarServiceProvider : ICalendarServicesProvider
 {
     private readonly LoginProviderDto _loginProvider;
-    private readonly VitaIdentityApiClient _vitaIdentityApiClient;
+    private readonly IVitaIdentityApiClient _vitaIdentityApiClient;
     private readonly ITaskRepository _taskRepository;
     private readonly Google.Apis.Calendar.v3.CalendarService _calendarService = new();
 
-    public GoogleCalendarServiceProvider(LoginProviderDto loginProvider, VitaIdentityApiClient vitaIdentityApiClient, ITaskRepository taskRepository)
+    public GoogleCalendarServiceProvider(LoginProviderDto loginProvider, IVitaIdentityApiClient vitaIdentityApiClient, ITaskRepository taskRepository)
     {
         _loginProvider = loginProvider;
         _vitaIdentityApiClient = vitaIdentityApiClient;

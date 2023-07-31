@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using Vita.Goals.Domain.ValueObjects;
 
-namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders;
+namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders.Domain;
 
 public class HexColorSpecimenBuilder : ISpecimenBuilder
 {

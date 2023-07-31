@@ -2,7 +2,7 @@
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
-namespace Vita.Goals.UnitTests.Application.Commands.Goals.Complete;
+namespace Vita.Goals.UnitTests.Application.Commands.Goals;
 public class CompleteGoalCommandHandlerTest
 {
     [Theory]

@@ -17,6 +17,8 @@ public class DeleteGoalCommandHandler : IRequestHandler<DeleteGoalCommand>
 
     public async Task Handle(DeleteGoalCommand request, CancellationToken cancellationToken)
     {
+        Goal goal = await _goalsRepository.FindById(request.Id, cancellationToken);
+
         if (goal.CreatedBy != request.User.Id)
             throw new UnauthorizedAccessException("The goal doesn't belong to the user");
 

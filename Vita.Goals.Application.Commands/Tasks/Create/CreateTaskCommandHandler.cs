@@ -25,6 +25,7 @@ internal class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Gui
     {
         Goal goal = await _goalRepository.FindById(request.GoalId, cancellationToken);
 
+        //TODO: Refactor this because is used in all the app
         if (goal.CreatedBy != request.User.Id)
             throw new UnauthorizedAccessException();
 

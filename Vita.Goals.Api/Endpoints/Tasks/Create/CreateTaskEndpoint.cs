@@ -11,10 +11,12 @@ namespace Vita.Goals.Api.Endpoints.Tasks.Create;
 public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, EmptyResponse>
 {
     private readonly ISender _sender;
+    private readonly AutoMapper.IMapper _mapper;
 
-    public CreateTaskEndpoint(ISender sender)
+    public CreateTaskEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -28,17 +30,13 @@ public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, EmptyResponse>
 
     public async override Task HandleAsync(CreateTaskRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(ct);
-            return;
-        }
-
+        User user = _mapper.Map<User>(User);
+    
         DateTimeInterval? plannedDate = request.PlannedDateStart.HasValue && request.PlannedDateEnd.HasValue ?
                                         new DateTimeInterval(request.PlannedDateStart.Value, request.PlannedDateEnd.Value) :
                                         null;
 
-        CreateTaskCommand command = new(request.GoalId, request.Title, new User(userId), plannedDate);
+        CreateTaskCommand command = new(request.GoalId, request.Title, user, plannedDate);
         Guid createdTaskId = await _sender.Send(command, ct);
 
         await SendCreatedAtAsync<GetTaskEndpoint>

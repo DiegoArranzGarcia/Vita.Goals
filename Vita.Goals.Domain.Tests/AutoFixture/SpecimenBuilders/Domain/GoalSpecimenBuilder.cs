@@ -2,7 +2,7 @@
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.AutoFixture.Extensions;
 
-namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders;
+namespace Vita.Goals.UnitTests.AutoFixture.SpecimenBuilders.Domain;
 public class GoalSpecimenBuilder : ISpecimenBuilder
 {
     public object Create(object request, ISpecimenContext context)

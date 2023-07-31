@@ -8,7 +8,7 @@ public static class Startup
 {
     public static void ConfigureApplicationCommandServices(this IServiceCollection services)
     {
-        services.AddScoped<CalendarServicesProviderFactory>();
+        services.AddScoped<ICalendarServicesProviderFactory, CalendarServicesProviderFactory>();
 
         services.AddMediatR((configuration) => configuration.RegisterServicesFromAssemblyContaining<CreateGoalCommand>());
     }

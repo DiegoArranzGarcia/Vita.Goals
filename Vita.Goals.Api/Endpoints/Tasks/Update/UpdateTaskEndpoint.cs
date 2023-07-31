@@ -9,10 +9,12 @@ namespace Vita.Goals.Api.Endpoints.Tasks.Update;
 public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, EmptyResponse>
 {
     private readonly ISender _sender;
+    private readonly AutoMapper.IMapper _mapper;
 
-    public UpdateTaskEndpoint(ISender sender)
+    public UpdateTaskEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -26,13 +28,9 @@ public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, EmptyResponse>
 
     public async override Task HandleAsync(UpdateTaskRequest request, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(ct);
-            return;
-        }
+        User user = _mapper.Map<User>(User);
 
-        UpdateTaskCommand command = new(Route<Guid>("id"), request.Title, request.GoalId, new User(userId), request.PlannedDateStart, request.PlannedDateEnd);
+        UpdateTaskCommand command = new(Route<Guid>("id"), request.Title, request.GoalId, user, request.PlannedDateStart, request.PlannedDateEnd);
         await _sender.Send(command, ct);
 
         await SendNoContentAsync(ct);

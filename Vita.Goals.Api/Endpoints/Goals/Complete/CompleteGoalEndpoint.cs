@@ -1,7 +1,6 @@
 ﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 using Vita.Goals.Application.Commands.Goals.Complete;
 using Vita.Goals.Application.Commands.Shared;
 
@@ -10,10 +9,12 @@ namespace Vita.Goals.Api.Endpoints.Goals.Complete;
 public class CompleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
 {
     private readonly ISender _sender;
+    private readonly AutoMapper.IMapper _mapper;
 
-    public CompleteGoalEndpoint(ISender sender)
+    public CompleteGoalEndpoint(ISender sender, AutoMapper.IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -26,15 +27,11 @@ public class CompleteGoalEndpoint : Endpoint<EmptyRequest, EmptyResponse>
         DontCatchExceptions();
     }
 
-    public async override Task HandleAsync(EmptyRequest request, CancellationToken ct)
+    public async override Task HandleAsync(EmptyRequest reñquest, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
-        {
-            await SendUnauthorizedAsync(ct);
-            return;
-        }
+        User user = _mapper.Map<User>(User);
 
-        CompleteGoalCommand completeGoalCommand = new(Route<Guid>("id"), new User(userId));
+        CompleteGoalCommand completeGoalCommand = new(Route<Guid>("id"), user);
         await _sender.Send(completeGoalCommand, ct);
 
         await SendNoContentAsync(ct);

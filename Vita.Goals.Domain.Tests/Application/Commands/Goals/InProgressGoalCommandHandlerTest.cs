@@ -1,17 +1,17 @@
-﻿using Vita.Goals.Application.Commands.Goals.Ready;
+﻿using Vita.Goals.Application.Commands.Goals.InProgress;
 using Vita.Goals.Domain.Aggregates.Goals;
 using Vita.Goals.UnitTests.Attributes;
 
-namespace Vita.Goals.UnitTests.Application.Commands.Goals.Ready;
-public class ReadyGoalCommandHandlerTest
+namespace Vita.Goals.UnitTests.Application.Commands.Goals;
+public class InProgressGoalCommandHandlerTest
 {
     [Theory]
     [AutoMoqData]
-    public async Task GivenReadyGoalCommand_ButNotAllowedUser_WhenHandle_ThenThrowsUnauthorizedAccessException(
+    public async Task GivenInProgressGoalCommand_ButNotAllowedUser_WhenHandle_ThenThrowsUnauthorizedAccessException(
         [Frozen] Mock<IGoalRepository> goalRepository,
         Goal goal,
-        ReadyGoalCommand command,
-        ReadyGoalCommandHandler sut)
+        InProgressGoalCommand command,
+        InProgressGoalCommandHandler sut)
     {
         //Arrange
         goalRepository.Setup(x => x.FindById(command.Id, default))
@@ -26,11 +26,11 @@ public class ReadyGoalCommandHandlerTest
 
     [Theory]
     [AutoMoqData]
-    public async Task GivenReadyGoalCommand_WhenHandle_ThenReadysTheGoal(
+    public async Task GivenInProgressGoalCommand_WhenHandle_ThenChangesToInProgressTheGoal(
         [Frozen] Mock<IGoalRepository> goalRepository,
         Fixture fixture,
-        ReadyGoalCommand command,
-        ReadyGoalCommandHandler sut)
+        InProgressGoalCommand command,
+        InProgressGoalCommandHandler sut)
     {
         //Arrange
         fixture.Inject(command.User.Id);
@@ -51,16 +51,16 @@ public class ReadyGoalCommandHandlerTest
         Goal capturedGoal = goalsCaptured.First();
 
         capturedGoal.Id.Should().Be(goal.Id);
-        capturedGoal.Status.Should().Be(GoalStatus.Ready);
+        capturedGoal.Status.Should().Be(GoalStatus.InProgress);
     }
 
     [Theory]
     [AutoMoqData]
-    public async Task GivenReadyGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
+    public async Task GivenInProgressGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
        [Frozen] Mock<IGoalRepository> goalRepository,
        Fixture fixture,
-       ReadyGoalCommand command,
-       ReadyGoalCommandHandler sut)
+       InProgressGoalCommand command,
+       InProgressGoalCommandHandler sut)
     {
         //Arrange
         fixture.Inject(command.User.Id);

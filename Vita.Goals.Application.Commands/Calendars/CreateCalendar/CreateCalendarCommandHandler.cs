@@ -12,7 +12,7 @@ public class CreateCalendarCommandHandler : IRequestHandler<CreateCalendarComman
     private readonly IVitaIdentityApiClient _vitaIdentityApiClient;
     private readonly ICalendarServicesProviderFactory _calendarServicesProviderFactory;
 
-    public CreateCalendarCommandHandler(VitaIdentityApiClient vitaIdentityApiClient, CalendarServicesProviderFactory calendarServicesProviderFactory)
+    public CreateCalendarCommandHandler(IVitaIdentityApiClient vitaIdentityApiClient, ICalendarServicesProviderFactory calendarServicesProviderFactory)
     {
         _vitaIdentityApiClient = vitaIdentityApiClient;
         _calendarServicesProviderFactory = calendarServicesProviderFactory;
