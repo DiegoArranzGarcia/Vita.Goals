@@ -82,6 +82,6 @@ public class CompleteGoalCommandHandlerTest
         await sut.Handle(command, default);
 
         //Assert
-        goalRepository.VerifyAll();
+        goalRepository.Verify();
     }
 }

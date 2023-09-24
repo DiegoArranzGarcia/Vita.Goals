@@ -39,9 +39,9 @@ public class CreateGoalCommandHandlerTests
     [Theory]
     [AutoMoqData]
     public async Task GivenCreateGoalCommand_WhenHandle_ThenMakesAppropiateRepositoryCalls(
-    [Frozen] Mock<IGoalRepository> repository,
-    CreateGoalCommand command,
-    CreateGoalCommandHandler sut)
+        [Frozen] Mock<IGoalRepository> repository,
+        CreateGoalCommand command,
+        CreateGoalCommandHandler sut)
     {
         //Arrange
         repository.Setup(x => x.Add(It.IsAny<Goal>()))
@@ -56,6 +56,6 @@ public class CreateGoalCommandHandlerTests
         _ = await sut.Handle(command, default);
 
         //Assert
-        repository.VerifyAll();
+        repository.Verify();
     }
 }

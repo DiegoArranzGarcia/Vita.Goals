@@ -1,7 +1,11 @@
 ﻿using AutoFixture.AutoMoq;
+using Castle.Core.Resource;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +27,17 @@ public class CreateGoalEndpointTests
     internal async Task GivenGoalId_WhenCompletingGoal_ThenReturnsNoContent(
         [Frozen] Mock<AutoMapper.IMapper> mapper,
         CreateGoalRequest request)
-    {
-        var linkGenerator = Mock.Of<LinkGenerator>();
-
+    {      
         CreateGoalEndpoint sut = Factory.Create<CreateGoalEndpoint>(
-            //ctx => ctx.Response.HttpContext.RequestServices.Add.GetService<LinkGenerator>()
+            ctx =>
+            {
+                var services = new ServiceCollection();
+
+                var linkGenerator = Mock.Of<LinkGenerator>();
+                services.AddTransient((_) => linkGenerator);
+
+                ctx.RequestServices = services.BuildServiceProvider();
+            },
             Mock.Of<ISender>(),
             mapper.Object);
 

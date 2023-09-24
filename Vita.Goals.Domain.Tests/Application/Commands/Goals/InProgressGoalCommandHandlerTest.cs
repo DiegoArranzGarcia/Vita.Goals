@@ -82,6 +82,6 @@ public class InProgressGoalCommandHandlerTest
         await sut.Handle(command, default);
 
         //Assert
-        goalRepository.VerifyAll();
+        goalRepository.Verify();
     }
 }

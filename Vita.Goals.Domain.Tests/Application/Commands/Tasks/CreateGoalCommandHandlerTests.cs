@@ -93,6 +93,6 @@ public class CreateTaskCommandHandlerTests
         _ = await sut.Handle(command, default);
 
         //Assert
-        repository.VerifyAll();
+        repository.Verify();
     }
 }
